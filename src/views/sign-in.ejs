@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign in | ScheduleBot</title>
+    <link rel="stylesheet" href="/public/styles.css" />
+  </head>
+  <body class="sign-in-page">
+    <main class="sign-in-shell">
+      <section class="sign-in-panel" aria-labelledby="sign-in-title">
+        <div class="sign-in-brand" aria-hidden="true">S</div>
+        <h1 id="sign-in-title">ScheduleBot</h1>
+        <p>Sign in to manage your WhatsApp schedules.</p>
+        <form class="sign-in-form" action="/sign-in" method="post">
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="password-input-wrap">
+              <input id="password" name="password" type="password" autocomplete="current-password" required autofocus />
+              <button class="password-toggle" type="button" aria-label="Show password" aria-controls="password" aria-pressed="false" data-password-toggle></button>
+            </div>
+          </div>
+          <% if (invalidPassword) { %>
+          <p class="sign-in-error" role="alert">Incorrect password.</p>
+          <% } %>
+          <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+      </section>
+    </main>
+    <script src="/public/password-toggle.js"></script>
+  </body>
+</html>

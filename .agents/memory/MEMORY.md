@@ -1,0 +1,5 @@
+- [npm git-dependency firewall block](npm-git-dependency-firewall-block.md) — package-firewall.replit.local 403s any package whose deps include a git URL (e.g. baileys→libsignal); workaround via override + public registry install.
+- [WhatsApp interactive buttons via baileys](baileys-interactive-buttons.md) — native flow buttons need generateWAMessageFromContent + relayMessage, with legacy buttons/type:1 fallback on error.
+- [In-memory vs persisted stores](in-memory-stores-convention.md) — custom-commands persist to JSON now, schedules stay in-memory; check before assuming either default.
+- [Baileys pairing-code login](baileys-pairing-code.md) — requestPairingCode() only works pre-registration/pre-connect; reset stored code on same lifecycle events as QR data.
+- [Baileys closed-session decrypt errors](baileys-closed-session-decrypt-errors.md) — bot connects but never responds; fix is wrapping auth keys in makeCacheableSignalKeyStore, else re-pair to reset corrupted session.

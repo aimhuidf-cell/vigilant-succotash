@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>ScheduleBot Dashboard</title>
+    <link rel="stylesheet" href="/public/styles.css" />
+    <script>
+      (function () {
+        try {
+          var storedTheme = window.localStorage.getItem('schedulebot-theme');
+          document.documentElement.setAttribute('data-theme', storedTheme === 'light' ? 'light' : 'dark');
+        } catch (error) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+
+      (function () {
+        if (window.location.hash) {
+          document.documentElement.classList.add('has-route-hash');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app" id="top">
+      <aside class="sidebar" id="sidebar" aria-label="Dashboard navigation">
+        <div class="sidebar-header">
+          <span class="brand-mark">S</span>
+          <span class="brand-name">ScheduleBot</span>
+        </div>
+
+        <div class="sidebar-body">
+          <nav class="sidebar-nav">
+            <p class="nav-group-label">Workspace</p>
+            <a class="nav-item active" href="#account">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"></path>
+              </svg>
+              <span>Account</span>
+            </a>
+            <a class="nav-item" href="#profile">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                <circle cx="9" cy="10" r="2.2"></circle>
+                <path d="M5.5 16c.6-1.8 2-2.6 3.5-2.6s2.9.8 3.5 2.6"></path>
+                <path d="M15 9h4M15 13h4"></path>
+              </svg>
+              <span>Profile</span>
+            </a>
+
+            <p class="nav-group-label nav-group-spaced">Messaging</p>
+            <a class="nav-item" href="#send-message">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 2L11 13"></path>
+                <path d="M22 2L15 22 11 13 2 9 22 2z"></path>
+              </svg>
+              <span>Send Message</span>
+            </a>
+            <a class="nav-item" href="#inbox">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 12h-4l-3 4-4-8-3 4H2"></path>
+                <path d="M5.45 5.11A9 9 0 0 1 20 12"></path>
+                <path d="M18.55 18.89A9 9 0 0 1 4 12"></path>
+              </svg>
+              <span>Inbox</span>
+            </a>
+            <a class="nav-item" href="#contacts">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span>Contacts</span>
+            </a>
+
+            <p class="nav-group-label nav-group-spaced">Automation</p>
+            <a class="nav-item" href="#schedule">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <path d="M3 10h18M8 2v4M16 2v4"></path>
+              </svg>
+              <span>Schedule</span>
+            </a>
+            <a class="nav-item" href="#custom-commands">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 17l6-6-6-6"></path>
+                <path d="M12 19h8"></path>
+              </svg>
+              <span>Custom Command</span>
+            </a>
+            <a class="nav-item" href="#reminders">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                <path d="M10 21h4"></path>
+              </svg>
+              <span>Reminders</span>
+            </a>
+            <a class="nav-item" href="#deleted-messages">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                <path d="M10 11v6M14 11v6"></path>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+              </svg>
+              <span>Deleted Messages</span>
+            </a>
+            <button class="nav-item nav-item-parent" id="settingsNavToggle" type="button" aria-current="false" aria-expanded="false" aria-controls="settingsNavSubmenu">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.04 2.04-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56v.09h-2.88v-.09A1.7 1.7 0 0 0 10.88 18.6a1.7 1.7 0 0 0-1.88.34l-.06.06-2.04-2.04.06-.06A1.7 1.7 0 0 0 7.3 15a1.7 1.7 0 0 0-1.56-1.03h-.09v-2.88h.09A1.7 1.7 0 0 0 7.3 10.06a1.7 1.7 0 0 0-.34-1.88L6.9 8.12 8.94 6.1l.06.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1.03-1.56v-.09h2.88v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.04 2.02-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03h.09v2.88h-.09A1.7 1.7 0 0 0 19.4 15Z"></path>
+              </svg>
+              <span>Settings</span>
+              <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
+            </button>
+            <div class="nav-submenu" id="settingsNavSubmenu" aria-hidden="true">
+              <a class="nav-subitem" href="#settings" data-settings-section="appearance">Appearance</a>
+              <a class="nav-subitem" href="#settings" data-settings-section="permissions">Reply permissions</a>
+              <a class="nav-subitem" href="#settings" data-settings-section="security">Security</a>
+            </div>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <span class="status-indicator <%= waState.ready ? 'is-on' : 'is-off' %>"></span>
+          <span class="sidebar-footer-text">WhatsApp <%= waState.ready ? 'connected' : 'offline' %></span>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="top-nav">
+          <div class="top-nav-inner">
+            <button class="icon-btn" id="sidebarMenuBtn" type="button" aria-label="Open menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                <path d="M9.5 4v16"></path>
+              </svg>
+            </button>
+            <div class="top-nav-title-wrap">
+              <nav class="top-nav-breadcrumb" aria-label="Breadcrumb">
+                <span class="crumb" id="breadcrumbRoot">Dashboard</span>
+                <span class="crumb-sep">/</span>
+                <span class="crumb" id="breadcrumbPage">Account</span>
+                <span class="crumb-sep" id="breadcrumbSectionSep" hidden>/</span>
+                <span class="crumb is-current" id="breadcrumbSection" hidden></span>
+              </nav>
+            </div>
+            <button class="icon-btn theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="Toggle light/dark mode">
+              <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+              </svg>
+              <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="container">
+          <section class="page" data-page="account" id="account">
+            <div class="account-layout">
+              <article class="card account-connection-card">
+                <div class="account-hero">
+                  <div>
+                    <p class="account-eyebrow">WhatsApp account</p>
+                    <h2 class="account-title">Connection</h2>
+                    <p class="account-description">Link the account that sends your scheduled messages.</p>
+                  </div>
+                  <span class="account-status <%= waState.ready ? 'is-ready' : 'is-waiting' %>" id="wa-status">
+                    <span aria-hidden="true"></span><%= waState.status %>
+                  </span>
+                </div>
+
+                <div class="account-connection-content">
+                  <div class="method-tabs account-method-tabs" role="tablist" aria-label="Connection method">
+                    <button type="button" class="method-tab active" id="methodTabQr" data-method="qr" role="tab">QR code</button>
+                    <button type="button" class="method-tab" id="methodTabPhone" data-method="phone" role="tab" <%= waState.ready ? 'disabled' : '' %>>Phone number</button>
+                  </div>
+
+                  <div id="qr-method" class="method-panel">
+                    <div id="wa-connected-wrap" class="connected-wrap" <%= waState.ready ? '' : 'hidden' %>>
+                      <div class="connected-icon" aria-hidden="true">✓</div>
+                      <div class="connected-intro">
+                        <p class="connected-title">WhatsApp is connected</p>
+                        <p class="connected-subtitle">This account is ready to send scheduled messages.</p>
+                      </div>
+                      <a class="btn btn-outline btn-sm connected-profile-link" href="#profile">View profile</a>
+                    </div>
+
+                    <div id="wa-qr-wrap" class="qr-wrap" <%= !waState.ready && waState.qrCodeDataUrl ? '' : 'hidden' %>>
+                      <% if (waState.qrCodeDataUrl) { %>
+                      <img src="<%= waState.qrCodeDataUrl %>" alt="QR WhatsApp" class="qr" />
+                      <% } else { %>
+                      <img src="" alt="QR WhatsApp" class="qr" />
+                      <% } %>
+                      <div class="qr-copy">
+                        <p id="wa-qr-caption" class="qr-caption">Scan this code in WhatsApp to connect the bot.</p>
+                        <ol class="qr-instructions">
+                          <li>Open WhatsApp Settings and select <strong>Linked Devices</strong>.</li>
+                          <li>Choose <strong>Link a Device</strong>, then scan this code.</li>
+                        </ol>
+                      </div>
+                    </div>
+                    <p id="wa-qr-empty" class="account-empty-state" <%= !waState.ready && !waState.qrCodeDataUrl ? '' : 'hidden' %>>Waiting for a new QR code. It will appear here automatically.</p>
+                  </div>
+
+                  <div id="phone-method" class="method-panel" hidden>
+                    <div class="field">
+                      <label for="pairingPhone">Phone number</label>
+                      <input id="pairingPhone" type="tel" inputmode="numeric" pattern="[+]?[0-9]*" autocomplete="tel" placeholder="60812xxxxxxx" <%= waState.ready ? 'disabled' : '' %> />
+                      <p class="hint">Include your country code, without spaces or the + symbol.</p>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-block" id="requestPairingBtn" <%= waState.ready ? 'disabled' : '' %>>Get pairing code</button>
+                    <p id="pairing-feedback" class="feedback"></p>
+
+                    <div id="pairing-code-wrap" class="pairing-code-wrap" hidden>
+                      <p class="muted">Your pairing code</p>
+                      <p class="pairing-code" id="pairing-code-value"></p>
+                      <p class="hint">In WhatsApp, open Linked Devices, choose Link with phone number, and enter this code.</p>
+                    </div>
+                  </div>
+
+                  <ul class="tips muted" id="account-target-tips" hidden></ul>
+                </div>
+              </article>
+
+              <aside class="account-side-panel">
+                <article class="card profile-preview-card">
+                  <div class="profile-preview-avatar" id="accountProfileAvatar" aria-hidden="true">?</div>
+                  <div class="profile-preview-info">
+                    <p class="profile-preview-label">Signed in as</p>
+                    <p class="profile-preview-name" id="accountProfileName"><%= waState.ready ? (waState.connectedAccount?.displayName || '-') : 'Not connected' %></p>
+                  </div>
+                  <a class="btn btn-outline btn-sm profile-preview-link" href="#profile">View profile</a>
+                </article>
+                <div class="account-help-note">
+                  <span class="account-help-icon" aria-hidden="true">?</span>
+                  <p>Connection status refreshes automatically while this page is open.</p>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="page" data-page="reminders" id="reminders" hidden>
+            <div class="grid two-cols">
+              <article class="card">
+                <div class="card-header section-head">
+                  <div>
+                    <h2 class="card-title">Create Reminder</h2>
+                    <p class="card-description">Send a WhatsApp reminder before a date.</p>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <form id="reminder-form">
+                    <div class="field">
+                      <label for="reminderName">Reminder name</label>
+                      <input id="reminderName" required placeholder="Birthday Ahmad" />
+                    </div>
+                    <div class="grid two-cols">
+                      <div class="field">
+                        <label for="reminderDate">Date</label>
+                        <input id="reminderDate" type="date" required />
+                      </div>
+                      <div class="field">
+                        <label for="reminderTime">Time</label>
+                        <input id="reminderTime" type="time" value="09:00" required />
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="reminderEarlyDays">Early days</label>
+                      <input id="reminderEarlyDays" value="10" placeholder="10, 3, 1, 0" required />
+                      <p class="hint">Use comma-separated days before the date. Include 0 for the date itself.</p>
+                    </div>
+                    <div class="field">
+                      <label for="reminderTargetChats">Target chats</label>
+                      <textarea id="reminderTargetChats" rows="3" required placeholder="60123456789@s.whatsapp.net, 1203630xxxx@g.us"></textarea>
+                      <p class="hint">Enter phone numbers or WhatsApp JIDs, separated by commas or new lines. Example: 60123456789 or 1203630xxxx@g.us.</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="reminderSaveBtn">Save Reminder</button>
+                    <p class="feedback" id="reminderFeedback" role="status"></p>
+                  </form>
+                </div>
+              </article>
+              <article class="card table-card">
+                <div class="card-header section-head">
+                  <div>
+                    <h2 class="card-title">Reminder List</h2>
+                    <p class="card-description">Manage upcoming bot notifications.</p>
+                  </div>
+                </div>
+                <div class="card-content no-pad">
+                  <div class="table-wrap">
+                    <table>
+                      <thead><tr><th>Name</th><th>Date</th><th>Early days</th><th>Targets</th><th></th></tr></thead>
+                      <tbody id="reminder-list">
+                        <% if (!reminders.length) { %><tr><td colspan="5" class="muted">No reminders yet</td></tr><% } %>
+                        <% reminders.forEach((item) => { %>
+                        <tr data-reminder-id="<%= item.id %>">
+                          <td><strong><%= item.name %></strong><br><span class="muted"><%= item.time %></span></td>
+                          <td><%= item.date %></td>
+                          <td><%= item.earlyDays.join(', ') %></td>
+                          <td><%= item.targetChats.length %> chat(s)</td>
+                          <td class="cell-action"><button type="button" class="btn btn-ghost btn-sm reminder-delete-btn" data-id="<%= item.id %>">Delete</button></td>
+                        </tr>
+                        <% }) %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" data-page="profile" id="profile" hidden>
+            <div class="profile-layout">
+              <article class="card profile-card">
+                <div class="profile-hero">
+                  <div class="profile-avatar" id="profileAvatar" aria-hidden="true">?</div>
+                  <div class="profile-hero-info">
+                    <p class="account-eyebrow">WhatsApp profile</p>
+                    <h2 class="account-title" id="profileName"><%= waState.connectedAccount?.displayName || 'Not connected' %></h2>
+                    <span class="account-status <%= waState.ready ? 'is-ready' : 'is-waiting' %>" id="profileStatus">
+                      <span aria-hidden="true"></span><%= waState.ready ? 'Connected' : 'Not connected' %>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="profile-details" id="profileDetails" <%= waState.ready ? '' : 'hidden' %>>
+                  <div class="profile-detail-row">
+                    <span class="profile-detail-label">Name</span>
+                    <span class="profile-detail-value" id="waConnectedName"><%= waState.connectedAccount?.displayName || '-' %></span>
+                  </div>
+                  <div class="profile-detail-row">
+                    <span class="profile-detail-label">Phone</span>
+                    <span class="profile-detail-value" id="waConnectedPhone"><%= waState.connectedAccount?.phoneNumber || '-' %></span>
+                  </div>
+                  <div class="profile-detail-row">
+                    <span class="profile-detail-label">JID</span>
+                    <span class="profile-detail-value profile-detail-mono" id="waConnectedJid"><%= waState.connectedAccount?.jid || '-' %></span>
+                  </div>
+                </div>
+                <p class="account-empty-state" id="profileEmptyState" <%= waState.ready ? 'hidden' : '' %>>Connect WhatsApp from the <a href="#account">Account</a> page to see your profile details here.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" data-page="schedule" id="schedule" hidden>
+            <div class="method-tabs" id="schedule-tabs" role="tablist" aria-label="Schedule tabs">
+              <button type="button" class="method-tab active" id="scheduleTabCreate" data-tab="create" role="tab" aria-controls="schedule-create-panel" aria-selected="true">Create Schedule</button>
+              <button type="button" class="method-tab" id="scheduleTabList" data-tab="list" role="tab" aria-controls="schedule-list-panel" aria-selected="false">Schedule List</button>
+            </div>
+
+            <div class="method-panel" id="schedule-create-panel" role="tabpanel" aria-labelledby="scheduleTabCreate">
+              <article class="card" id="create-schedule">
+                <div class="card-header">
+                  <h2 class="card-title">Create Schedule</h2>
+                  <p class="card-description">Queue a new WhatsApp message</p>
+                </div>
+                <div class="card-content">
+                  <form id="schedule-form">
+                    <div class="field">
+                      <label for="targetType">Target Type</label>
+                      <select id="targetType" name="targetType" required>
+                        <option value="group" selected>Group Chat</option>
+                        <option value="personal">Personal Chat</option>
+                      </select>
+                    </div>
+
+                    <div class="field" id="targetValueField">
+                      <label for="targetValue" id="targetValueLabel">Group ID (example: 1203630xxxx@g.us)</label>
+                      <input id="targetValue" name="targetValue" required />
+                      <p class="hint" id="targetHint">You can enter 1203630xxxx only or with @g.us suffix</p>
+                    </div>
+
+                    <div class="group-tools" id="groupTools">
+                      <div class="group-tools-head">
+                        <label for="groupPicker">Select Group From WhatsApp Account</label>
+                        <button type="button" class="btn btn-outline btn-sm" id="refreshGroupsBtn">Refresh Groups</button>
+                      </div>
+                      <select id="groupPicker">
+                        <option value="">Loading group list...</option>
+                      </select>
+                      <p class="hint" id="groupFetchHint">Pick a group to auto-fill the ID.</p>
+                    </div>
+
+                    <div class="group-tools" id="personalChatTools" hidden>
+                      <div class="group-tools-head">
+                        <label for="personalChatPicker">Generate From Current Personal Chats</label>
+                        <button type="button" class="btn btn-outline btn-sm" id="refreshPersonalChatsBtn">Refresh Chats</button>
+                      </div>
+                      <select id="personalChatPicker">
+                        <option value="">Loading personal chat list...</option>
+                      </select>
+                      <p class="hint" id="personalChatFetchHint">Pick a personal chat to auto-fill the destination ID.</p>
+                    </div>
+
+                    <div class="field">
+                      <label for="message">Message</label>
+                      <textarea id="message" name="message" rows="4" required></textarea>
+                    </div>
+
+                    <div class="field" id="scheduleButtonsField">
+                      <div class="field-head">
+                        <label>Interactive Buttons <span class="muted">(optional)</span></label>
+                        <button type="button" class="btn btn-outline btn-sm" id="scheduleAddButtonRowBtn">Add Button</button>
+                      </div>
+                      <div id="scheduleButtonRows" class="button-rows"></div>
+                      <p class="hint">User boleh pilih button terus tanpa perlu tulis JSON.</p>
+                    </div>
+
+                    <div class="field field-narrow">
+                      <label for="scheduleAt">Send Time</label>
+                      <input id="scheduleAt" name="scheduleAt" type="datetime-local" required />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Save Schedule</button>
+                  </form>
+                  <p id="form-feedback" class="feedback"></p>
+                </div>
+              </article>
+            </div>
+
+            <div class="method-panel" id="schedule-list-panel" role="tabpanel" aria-labelledby="scheduleTabList" hidden>
+              <article class="card table-card" id="schedule-list">
+                <div class="card-header section-head">
+                  <div>
+                    <h2 class="card-title">Schedule List</h2>
+                    <p class="card-description">Track every pending, sent, and failed job in one clean table.</p>
+                  </div>
+                </div>
+                <div class="card-content no-pad">
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Type</th>
+                          <th>Details</th>
+                          <th>Status</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% if (!schedules.length) { %>
+                        <tr>
+                          <td colspan="5" class="muted">No schedules yet</td>
+                        </tr>
+                        <% } %>
+
+                        <% schedules.forEach((item) => { %>
+                        <tr>
+                          <td><%= item.id %></td>
+                          <td>
+                            <span class="badge badge-outline">
+                              <%= item.targetType === 'group' ? 'group' : 'personal' %>
+                            </span>
+                          </td>
+                          <td class="schedule-details-cell">
+                            <div class="schedule-detail-actions">
+                              <button class="btn btn-outline btn-sm btn-view-schedule" data-id="<%= item.id %>">View</button>
+                            </div>
+                          </td>
+                          <td>
+                            <span class="badge badge-<%= item.status %>"><%= item.status %></span>
+                          </td>
+                          <td class="cell-action">
+                            <button class="btn btn-ghost btn-sm btn-delete" data-id="<%= item.id %>">Delete</button>
+                          </td>
+                        </tr>
+                        <% }) %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" data-page="send-message" id="send-message" hidden>
+            <div class="grid two-cols">
+              <article class="card">
+                <div class="card-header section-head send-message-header">
+                  <div class="send-message-header-main">
+                    <h2 class="card-title">Send Message</h2>
+                    <p class="card-description">Send WhatsApp message instantly from dashboard</p>
+                  </div>
+
+                  <div class="complex-menu" id="sendComplexMenuWrap">
+                    <button
+                      type="button"
+                      class="btn btn-outline send-menu-icon-btn"
+                      id="sendComplexMenuTrigger"
+                      aria-haspopup="menu"
+                      aria-expanded="false"
+                      aria-controls="sendComplexMenuDropdown"
+                      aria-label="Open message menu"
+                      title="Message Menu"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                      </svg>
+                    </button>
+
+                    <div class="complex-menu-dropdown" id="sendComplexMenuDropdown" role="menu" hidden>
+                      <div class="complex-menu-group">
+                        <p class="complex-menu-label">File</p>
+                        <button type="button" class="complex-menu-item" data-send-menu-action="new-message">
+                          <span>New Message</span>
+                          <span class="complex-menu-shortcut">Ctrl+N</span>
+                        </button>
+                        <button type="button" class="complex-menu-item" data-send-menu-action="save-draft">
+                          <span>Save Draft</span>
+                          <span class="complex-menu-shortcut">Ctrl+S</span>
+                        </button>
+
+                        <div class="complex-menu-submenu">
+                          <button type="button" class="complex-menu-item complex-menu-sub-trigger" data-submenu-toggle>
+                            <span>Open Recent Template</span>
+                            <span class="complex-menu-caret">›</span>
+                          </button>
+                          <div class="complex-menu-subcontent" role="menu">
+                            <p class="complex-menu-label">Recent Templates</p>
+                            <button type="button" class="complex-menu-item" data-send-menu-action="template-reminder">Reminder Payment</button>
+                            <button type="button" class="complex-menu-item" data-send-menu-action="template-arrival">Parcel Arrival</button>
+
+                            <div class="complex-menu-submenu complex-menu-submenu-right">
+                              <button type="button" class="complex-menu-item complex-menu-sub-trigger" data-submenu-toggle>
+                                <span>More Templates</span>
+                                <span class="complex-menu-caret">›</span>
+                              </button>
+                              <div class="complex-menu-subcontent" role="menu">
+                                <button type="button" class="complex-menu-item" data-send-menu-action="template-promo">Promo Broadcast</button>
+                                <button type="button" class="complex-menu-item" data-send-menu-action="template-thanks">Thank You Note</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="complex-menu-separator"></div>
+
+                      <div class="complex-menu-group">
+                        <p class="complex-menu-label">View</p>
+                        <label class="complex-menu-item complex-menu-check-item">
+                          <input type="checkbox" id="sendMenuToggleGroupTools" checked />
+                          <span>Show Group Picker</span>
+                        </label>
+                        <label class="complex-menu-item complex-menu-check-item">
+                          <input type="checkbox" id="sendMenuToggleHints" checked />
+                          <span>Show Hints</span>
+                        </label>
+
+                        <div class="complex-menu-submenu">
+                          <button type="button" class="complex-menu-item complex-menu-sub-trigger" data-submenu-toggle>
+                            <span>Theme</span>
+                            <span class="complex-menu-caret">›</span>
+                          </button>
+                          <div class="complex-menu-subcontent" role="menu">
+                            <p class="complex-menu-label">Appearance</p>
+                            <label class="complex-menu-item complex-menu-radio-item">
+                              <input type="radio" name="sendMenuTheme" value="light" />
+                              <span>Light</span>
+                            </label>
+                            <label class="complex-menu-item complex-menu-radio-item">
+                              <input type="radio" name="sendMenuTheme" value="dark" />
+                              <span>Dark</span>
+                            </label>
+                            <label class="complex-menu-item complex-menu-radio-item">
+                              <input type="radio" name="sendMenuTheme" value="system" checked />
+                              <span>System</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="complex-menu-separator"></div>
+
+                      <div class="complex-menu-group">
+                        <p class="complex-menu-label">Actions</p>
+                        <button type="button" class="complex-menu-item" data-send-menu-action="refresh-targets">
+                          <span>Refresh Target Lists</span>
+                        </button>
+                        <button type="button" class="complex-menu-item" data-send-menu-action="copy-target">
+                          <span>Copy Target ID</span>
+                        </button>
+                        <button type="button" class="complex-menu-item" data-send-menu-action="send-now">
+                          <span>Send Now</span>
+                          <span class="complex-menu-shortcut">Ctrl+Enter</span>
+                        </button>
+                      </div>
+
+                      <div class="complex-menu-separator"></div>
+
+                      <div class="complex-menu-group">
+                        <button type="button" class="complex-menu-item complex-menu-item-danger" data-send-menu-action="clear-form">
+                          <span>Clear Form</span>
+                          <span class="complex-menu-shortcut">Shift+Esc</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <form id="send-form">
+                    <div class="field">
+                      <label for="sendTargetType">Target Type</label>
+                      <select id="sendTargetType" name="targetType" required>
+                        <option value="group" selected>Group Chat</option>
+                        <option value="personal">Personal Chat</option>
+                      </select>
+                    </div>
+
+                    <div class="field" id="sendTargetValueField">
+                      <label for="sendTargetValue" id="sendTargetValueLabel">Group ID (example: 1203630xxxx@g.us)</label>
+                      <input id="sendTargetValue" name="targetValue" required />
+                      <p class="hint" id="sendTargetHint">You can enter 1203630xxxx only or with @g.us suffix</p>
+                    </div>
+
+                    <div class="group-tools" id="sendGroupTools">
+                      <div class="group-tools-head">
+                        <label for="sendGroupPicker">Select Group From WhatsApp Account</label>
+                      </div>
+                      <select id="sendGroupPicker">
+                        <option value="">Loading group list...</option>
+                      </select>
+                      <p class="hint" id="sendGroupFetchHint">Pick a group to auto-fill the ID.</p>
+                    </div>
+
+                    <div class="group-tools" id="sendPersonalChatTools" hidden>
+                      <div class="group-tools-head">
+                        <label for="sendPersonalChatPicker">Generate From Current Personal Chats</label>
+                      </div>
+                      <select id="sendPersonalChatPicker">
+                        <option value="">Loading personal chat list...</option>
+                      </select>
+                      <p class="hint" id="sendPersonalChatFetchHint">Pick a personal chat to auto-fill the destination ID.</p>
+                    </div>
+
+                    <div class="field">
+                      <label for="sendMessageText">Message</label>
+                      <textarea id="sendMessageText" name="message" rows="4"></textarea>
+                    </div>
+
+                    <div class="field">
+                      <label for="sendMediaType">Media Type <span class="muted">(optional)</span></label>
+                      <select id="sendMediaType" name="mediaType">
+                        <option value="none" selected>No media</option>
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
+                        <option value="audio">Audio</option>
+                        <option value="voice">Voice Note</option>
+                        <option value="document">File (Document)</option>
+                      </select>
+                    </div>
+
+                    <div class="field" id="sendMediaSourceField" hidden>
+                      <label for="sendMediaSource">Media Source</label>
+                      <select id="sendMediaSource" name="mediaSource">
+                        <option value="url" selected>By URL</option>
+                        <option value="upload">Upload File</option>
+                      </select>
+                    </div>
+
+                    <div class="field" id="sendMediaUrlField" hidden>
+                      <label for="sendMediaUrl">Media URL</label>
+                      <input id="sendMediaUrl" name="mediaUrl" placeholder="https://..." />
+                    </div>
+
+                    <div class="field" id="sendMediaUploadField" hidden>
+                      <label for="sendMediaUpload">Upload Media File <span class="muted">(max 20MB)</span></label>
+                      <input id="sendMediaUpload" name="mediaUpload" type="file" />
+                      <p class="hint" id="sendMediaUploadHint">Choose a file to upload and send.</p>
+                    </div>
+
+                    <div class="field" id="sendFileNameField" hidden>
+                      <label for="sendFileName">File Name <span class="muted">(document only, optional)</span></label>
+                      <input id="sendFileName" name="fileName" placeholder="invoice.pdf" />
+                    </div>
+
+                    <div class="field" id="sendButtonsField">
+                      <div class="field-head">
+                        <label>Interactive Buttons <span class="muted">(optional)</span></label>
+                        <button type="button" class="btn btn-outline btn-sm" id="sendAddButtonRowBtn">Add Button</button>
+                      </div>
+                      <div id="sendButtonRows" class="button-rows"></div>
+                      <p class="hint">Isi message atau buttons (sekurang-kurangnya satu).</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Send Now</button>
+                  </form>
+                  <p id="send-feedback" class="feedback"></p>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" data-page="inbox" id="inbox" hidden>
+            <div class="inbox-layout">
+              <article class="card inbox-list-card">
+                <div class="card-header section-head">
+                  <div>
+                    <h2 class="card-title">Inbox Conversations</h2>
+                    <p class="card-description">List kontak/group yang pernah kirim atau terima pesan</p>
+                  </div>
+                  <button type="button" class="btn btn-outline btn-sm" id="inboxRefreshBtn">Refresh</button>
+                </div>
+                <div class="card-content">
+                  <p class="feedback" id="inboxFeedback"></p>
+                  <div class="inbox-conversation-list" id="inboxConversationList">
+                    <p class="muted">No conversations loaded yet.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card inbox-thread-card">
+                <div class="card-header">
+                  <h2 class="card-title" id="inboxThreadTitle">Select a conversation</h2>
+                  <p class="card-description" id="inboxThreadSubtitle">Choose a contact on the left to view messages</p>
+                </div>
+                <div class="card-content inbox-thread-content">
+                  <div class="inbox-message-list" id="inboxMessageList">
+                    <p class="muted">Messages will appear here.</p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" data-page="contacts" id="contacts" hidden>
+            <div class="method-tabs" id="contacts-tabs" role="tablist" aria-label="Contacts tabs">
+              <button type="button" class="method-tab active" id="contactsTabSynced" data-tab="synced" role="tab" aria-controls="contacts-synced-panel" aria-selected="true">Synced Contacts</button>
+              <button type="button" class="method-tab" id="contactsTabSaved" data-tab="saved" role="tab" aria-controls="contacts-saved-panel" aria-selected="false">Saved Contacts</button>
+            </div>
+
+            <div class="method-panel" id="contacts-synced-panel" role="tabpanel" aria-labelledby="contactsTabSynced">
+            <article class="card contacts-card">
+              <div class="card-header section-head contacts-header">
+                <div class="contacts-heading">
+                  <div class="contacts-heading-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="contacts-title-row">
+                      <p class="account-eyebrow">WhatsApp directory</p>
+                      <span class="contacts-count" id="contactsCount">Not loaded</span>
+                    </div>
+                    <h2 class="card-title">Contacts</h2>
+                    <p class="card-description">People from your active personal chats</p>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline btn-sm contacts-refresh-btn" id="contactsRefreshBtn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 5v4h4"></path>
+                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 19v-4h-4"></path>
+                  </svg>
+                  <span>Refresh</span>
+                </button>
+              </div>
+              <div class="card-content">
+                <div class="contacts-toolbar">
+                  <label class="contacts-search" for="contactSearch">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7"></circle>
+                      <path d="m20 20-3.5-3.5"></path>
+                    </svg>
+                    <input id="contactSearch" type="text" inputmode="search" role="searchbox" autocomplete="off" placeholder="Search name or phone number" aria-controls="contactsList" />
+                    <button class="contacts-search-clear" id="contactsSearchClear" type="button" aria-label="Clear contact search" title="Clear search" hidden>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6 6 18"></path>
+                      </svg>
+                    </button>
+                  </label>
+                  <span class="contacts-toolbar-note">Search by name, number, or chat ID</span>
+                </div>
+                <p class="feedback" id="contactsFeedback" role="status" aria-live="polite"></p>
+                <div class="contacts-list" id="contactsList">
+                  <p class="muted">Open this page to load your contacts.</p>
+                </div>
+              </div>
+            </article>
+            </div>
+
+            <div class="method-panel" id="contacts-saved-panel" role="tabpanel" aria-labelledby="contactsTabSaved" hidden>
+              <article class="card contacts-card">
+                <div class="card-header section-head contacts-header">
+                  <div class="contacts-heading">
+                    <div class="contacts-heading-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="contacts-title-row">
+                        <p class="account-eyebrow">Manual directory</p>
+                        <span class="contacts-count" id="savedContactsCount"><%= savedContacts.length %> contact<%= savedContacts.length === 1 ? '' : 's' %></span>
+                      </div>
+                      <h2 class="card-title">Saved Contacts</h2>
+                      <p class="card-description">Add and manage your own contact list, searchable with the .contact bot command</p>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-primary btn-sm" id="savedContactAddBtn">Add Contact</button>
+                </div>
+                <div class="card-content">
+                  <div class="contacts-toolbar">
+                    <label class="contacts-search" for="savedContactSearch">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m20 20-3.5-3.5"></path>
+                      </svg>
+                      <input id="savedContactSearch" type="text" inputmode="search" role="searchbox" autocomplete="off" placeholder="Search name, phone, category, or note" aria-controls="savedContactsList" />
+                      <button class="contacts-search-clear" id="savedContactSearchClear" type="button" aria-label="Clear contact search" title="Clear search" hidden>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                          <path d="M6 6l12 12M18 6 6 18"></path>
+                        </svg>
+                      </button>
+                    </label>
+                    <span class="contacts-toolbar-note">Use .contact &lt;name&gt; from WhatsApp to look up a saved contact</span>
+                  </div>
+
+                  <div class="saved-contact-form" id="savedContactForm" hidden>
+                    <input type="hidden" id="savedContactId" value="" />
+                    <div class="field-row">
+                      <div class="field">
+                        <label for="savedContactName">Name</label>
+                        <input id="savedContactName" placeholder="e.g. Ali Ahmad" />
+                      </div>
+                      <div class="field">
+                        <label for="savedContactPhone">Phone number</label>
+                        <input id="savedContactPhone" type="tel" placeholder="60123456789" />
+                      </div>
+                    </div>
+                    <div class="field-row">
+                      <div class="field">
+                        <label for="savedContactCategory">Category</label>
+                        <select id="savedContactCategory">
+                          <% contactCategories.forEach((cat) => { %>
+                          <option value="<%= cat %>"><%= cat %></option>
+                          <% }) %>
+                        </select>
+                      </div>
+                      <div class="field">
+                        <label for="savedContactNote">Note <span class="muted">(optional)</span></label>
+                        <input id="savedContactNote" placeholder="Short note" />
+                      </div>
+                    </div>
+                    <div class="form-actions">
+                      <button type="button" class="btn btn-primary" id="savedContactSaveBtn">Save Contact</button>
+                      <button type="button" class="btn btn-outline" id="savedContactCancelBtn">Cancel</button>
+                    </div>
+                    <p class="feedback" id="savedContactFormFeedback"></p>
+                  </div>
+
+                  <p class="feedback" id="savedContactsFeedback" role="status" aria-live="polite"></p>
+                  <div class="contacts-list" id="savedContactsList"></div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" data-page="custom-commands" id="custom-commands" hidden>
+            <div class="method-tabs" id="command-tabs" role="tablist" aria-label="Custom command tabs">
+              <button type="button" class="method-tab active" id="commandTabCreate" data-tab="create" role="tab" aria-controls="command-create-panel" aria-selected="true">Add Command</button>
+              <button type="button" class="method-tab" id="commandTabList" data-tab="list" role="tab" aria-controls="command-list-panel" aria-selected="false">Command List</button>
+            </div>
+
+            <div class="method-panel" id="command-create-panel" role="tabpanel" aria-labelledby="commandTabCreate">
+              <article class="card">
+                <div class="card-header section-head command-settings-header">
+                  <div>
+                    <h2 class="card-title">Add Custom Command</h2>
+                    <p class="card-description">Auto-reply to incoming WhatsApp messages by trigger</p>
+                  </div>
+
+                  <div class="complex-menu" id="commandComplexMenuWrap">
+                    <button
+                      type="button"
+                      class="btn btn-outline send-menu-icon-btn"
+                      id="commandComplexMenuTrigger"
+                      aria-haspopup="menu"
+                      aria-expanded="false"
+                      aria-controls="commandComplexMenuDropdown"
+                      aria-label="Open command settings"
+                      title="Command Settings"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                      </svg>
+                    </button>
+
+                    <div class="complex-menu-dropdown" id="commandComplexMenuDropdown" role="menu" hidden>
+                      <div class="complex-menu-group">
+                        <p class="complex-menu-label">Quick Fill</p>
+
+                        <div class="complex-menu-submenu">
+                          <button type="button" class="complex-menu-item complex-menu-sub-trigger" data-submenu-toggle>
+                            <span>Trigger Examples</span>
+                            <span class="complex-menu-caret">›</span>
+                          </button>
+                          <div class="complex-menu-subcontent" role="menu">
+                            <p class="complex-menu-label">Popular Triggers</p>
+                            <button type="button" class="complex-menu-item" data-command-menu-action="fill-trigger" data-trigger-value=".hello">
+                              <span>.hello</span>
+                            </button>
+                            <button type="button" class="complex-menu-item" data-command-menu-action="fill-trigger" data-trigger-value=".menu">
+                              <span>.menu</span>
+                            </button>
+                            <button type="button" class="complex-menu-item" data-command-menu-action="fill-trigger" data-trigger-value=".help">
+                              <span>.help</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="complex-menu-separator"></div>
+
+                      <div class="complex-menu-group">
+                        <p class="complex-menu-label">Form</p>
+                        <button type="button" class="complex-menu-item" data-command-menu-action="add-button-row">
+                          <span>Add Button Row</span>
+                        </button>
+                        <button type="button" class="complex-menu-item" data-command-menu-action="focus-trigger">
+                          <span>Focus Trigger Field</span>
+                        </button>
+                        <button type="button" class="complex-menu-item complex-menu-item-danger" data-command-menu-action="reset-form">
+                          <span>Reset Command Form</span>
+                        </button>
+                      </div>
+
+                      <div class="complex-menu-separator"></div>
+
+                      <div class="complex-menu-group">
+                        <p class="complex-menu-label">View</p>
+                        <button type="button" class="complex-menu-item" data-command-menu-action="open-guide">
+                          <span>Open Button Setup Guide</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <form id="command-form">
+                    <input type="hidden" id="commandOriginalTrigger" value="" />
+                    <div class="field">
+                      <label for="commandTrigger">Trigger</label>
+                      <input id="commandTrigger" name="trigger" placeholder=".hello" required />
+                      <p class="hint">Auto adds . at the front, example: .hello</p>
+                    </div>
+
+                    <div class="field">
+                      <label for="commandMediaType">Media Type</label>
+                      <select id="commandMediaType" name="mediaType" required>
+                        <option value="">Select media type first</option>
+                        <option value="none">No media</option>
+                        <% mediaTypes.forEach((type) => { %>
+                        <option value="<%= type %>"><%= type %></option>
+                        <% }) %>
+                      </select>
+                      <p class="hint">Select media type to show related fields.</p>
+                    </div>
+
+                    <div id="command-advanced-fields" hidden>
+                      <div class="field" id="commandMediaSourceField">
+                        <label for="commandMediaSource">Media Source</label>
+                        <select id="commandMediaSource" name="mediaSource">
+                          <option value="url" selected>By URL</option>
+                          <option value="upload">Upload File</option>
+                        </select>
+                      </div>
+
+                      <div class="field" id="commandMediaUrlField">
+                        <label for="commandMediaUrl">Media URL <span class="muted">(optional)</span></label>
+                        <input id="commandMediaUrl" name="mediaUrl" placeholder="https://..." />
+                      </div>
+
+                      <div class="field" id="commandMediaUploadField" hidden>
+                        <label for="commandMediaUpload">Upload Media File <span class="muted">(max 20MB)</span></label>
+                        <input id="commandMediaUpload" name="mediaUpload" type="file" />
+                        <p class="hint" id="commandMediaUploadHint">Choose a file to upload and use as media source.</p>
+                      </div>
+
+                      <div class="field" id="commandFileNameField" hidden>
+                        <label for="commandFileName">File Name <span class="muted">(document only, optional)</span></label>
+                        <input id="commandFileName" name="fileName" placeholder="brochure.pdf" />
+                      </div>
+
+                      <div class="field" id="commandResponseField">
+                        <label for="commandResponse">Response Text</label>
+                        <textarea id="commandResponse" name="response" rows="3" placeholder="Reply message..."></textarea>
+                        <p class="hint" id="commandResponseRuleHint">Response text is required when using media and button together.</p>
+                      </div>
+
+                      <div class="field" id="commandButtonsField">
+                        <div class="field-head">
+                          <label>Buttons <span class="muted">(optional)</span></label>
+                          <button type="button" class="btn btn-outline btn-sm" id="addButtonRowBtn">Add Button</button>
+                        </div>
+                        <div id="buttonRows" class="button-rows"></div>
+                        <p class="hint">Add interactive buttons to your response. Open the setup guide for button value rules and examples.</p>
+                      </div>
+
+                      <div class="field-row optional-meta-row" id="commandOptionalMetaRow">
+                        <div class="field">
+                          <label for="commandCategory">Category <span class="muted">(optional)</span></label>
+                          <select id="commandCategory" name="category">
+                            <% commandCategories.forEach((cat) => { %>
+                            <option value="<%= cat %>"><%= cat %></option>
+                            <% }) %>
+                          </select>
+                        </div>
+                        <div class="field">
+                          <label for="commandDescription">Description <span class="muted">(optional)</span></label>
+                          <input id="commandDescription" name="description" placeholder="Short note about this command" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-actions">
+                      <button type="submit" class="btn btn-block btn-save-command" id="commandSubmitBtn" disabled>Save Command</button>
+                      <button type="button" class="btn btn-outline btn-block" id="commandCancelBtn" hidden>Cancel Edit</button>
+                    </div>
+                  </form>
+                  <p id="command-feedback" class="feedback"></p>
+                </div>
+              </article>
+            </div>
+
+            <div class="method-panel" id="command-list-panel" role="tabpanel" aria-labelledby="commandTabList" hidden>
+              <article class="card command-list-card built-in-command-card">
+                <div class="card-header section-head command-list-header">
+                  <div class="contacts-heading">
+                    <div class="contacts-heading-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 5h16M4 12h16M4 19h10"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="account-eyebrow">Bot commands</p>
+                      <h2 class="card-title">Built-in Commands</h2>
+                      <p class="card-description">Commands included in the bot and ready to use.</p>
+                    </div>
+                  </div>
+                  <span class="contacts-count"><%= builtInCommands.length %> commands</span>
+                </div>
+                <div class="card-content">
+                  <div class="command-list-grid built-in-command-grid">
+                    <% builtInCommands.forEach((item) => { %>
+                    <div class="command-card built-in-command-item">
+                      <div class="command-card-top">
+                        <code class="command-card-trigger"><%= item.trigger %></code>
+                        <span class="badge badge-outline command-card-category"><%= item.category %></span>
+                      </div>
+                      <p class="command-card-description"><%= item.description %></p>
+                    </div>
+                    <% }) %>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card command-list-card">
+                <div class="card-header section-head command-list-header">
+                  <div class="contacts-heading">
+                    <div class="contacts-heading-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="account-eyebrow">Auto-reply</p>
+                      <h2 class="card-title">Command List</h2>
+                      <p class="card-description">All active auto-reply triggers</p>
+                    </div>
+                  </div>
+                  <span class="contacts-count" id="commandListCount"><%= customCommands.length %> command<%= customCommands.length === 1 ? '' : 's' %></span>
+                </div>
+                <div class="card-content">
+                  <div class="command-list-toolbar">
+                    <label class="contacts-search command-list-search">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                      <input type="search" id="commandListSearch" placeholder="Search by trigger, description, or category" />
+                      <button type="button" class="contacts-search-clear" id="commandListSearchClear" hidden aria-label="Clear search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
+                    </label>
+                    <select id="commandListCategoryFilter" class="command-list-category-filter">
+                      <option value="">All categories</option>
+                      <% commandCategories.forEach((cat) => { %>
+                      <option value="<%= cat %>"><%= cat %></option>
+                      <% }) %>
+                    </select>
+                  </div>
+
+                  <div class="command-list-grid" id="commandListGrid">
+                    <% customCommands.forEach((item) => {
+                      const buttonCount = Array.isArray(item.buttons) ? item.buttons.length : 0;
+                      const hasMedia = Boolean(item.mediaType && item.mediaUrl);
+                      const searchValue = `${item.trigger || ''} ${item.description || ''} ${item.category || ''}`.toLowerCase();
+                    %>
+                    <div class="command-card" data-trigger="<%= item.trigger %>" data-category="<%= item.category %>" data-search="<%= searchValue %>">
+                      <div class="command-card-top">
+                        <code class="command-card-trigger"><%= item.trigger %></code>
+                        <span class="badge badge-outline command-card-category"><%= item.category %></span>
+                      </div>
+                      <p class="command-card-description"><%= item.description || 'No description' %></p>
+                      <div class="command-card-meta">
+                        <span class="command-card-chip"><%= hasMedia ? `Media: ${item.mediaType}` : 'Media: none' %></span>
+                        <% if (buttonCount) { %>
+                        <span class="command-card-chip">Buttons: <%= buttonCount %></span>
+                        <% } %>
+                      </div>
+                      <div class="command-card-actions">
+                        <button class="btn btn-outline btn-sm btn-preview-command" data-trigger="<%= item.trigger %>" aria-label="View command content">View</button>
+                        <button class="btn btn-ghost btn-sm btn-edit-command" data-trigger="<%= item.trigger %>">Edit</button>
+                        <button class="btn btn-ghost btn-sm btn-delete-command" data-trigger="<%= item.trigger %>">Delete</button>
+                      </div>
+                    </div>
+                    <% }) %>
+                  </div>
+
+                  <p class="muted command-list-empty" id="commandListEmpty" <%= customCommands.length ? 'hidden' : '' %>>No custom commands yet</p>
+                  <p class="muted command-list-empty" id="commandListNoResults" hidden>No commands match your search.</p>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" data-page="deleted-messages" id="deleted-messages" hidden>
+            <article class="card">
+              <div class="card-header section-head">
+                <div>
+                  <h2 class="card-title">Deleted Messages</h2>
+                  <p class="card-description">List chat names, then open a WhatsApp-style conversation to view deleted messages</p>
+                </div>
+                <% const deletedMessagesUi = deletedMessages.filter((item) => {
+                  const chatId = String(item.chatId || '').toLowerCase();
+                  const senderId = String(item.senderId || '').toLowerCase();
+                  return !chatId.endsWith('@lid') && !senderId.endsWith('@lid');
+                }); %>
+                <button type="button" class="btn btn-outline btn-sm" id="clearDeletedMessagesBtn" <%= !deletedMessagesUi.length ? 'disabled' : '' %>>Clear All</button>
+              </div>
+              <div class="card-content">
+                <% const deletedConversationMap = new Map(); %>
+                <% deletedMessagesUi.forEach((item) => {
+                  const key = String(item.chatId || 'unknown');
+                  const chatLabel = item.isGroup
+                    ? String(item.chatName || item.chatId || 'Unknown Group')
+                    : String(item.senderName || item.chatName || item.chatId || 'Unknown Contact');
+                  const existing = deletedConversationMap.get(key);
+                  if (!existing) {
+                    deletedConversationMap.set(key, {
+                      chatId: key,
+                      chatLabel,
+                      isGroup: Boolean(item.isGroup),
+                      total: 1,
+                      latest: item,
+                    });
+                  } else {
+                    existing.total += 1;
+                    if (new Date(item.deletedAt).getTime() > new Date(existing.latest.deletedAt).getTime()) {
+                      existing.latest = item;
+                    }
+                  }
+                }); %>
+                <% const deletedConversations = Array.from(deletedConversationMap.values())
+                  .sort((a, b) => new Date(b.latest.deletedAt).getTime() - new Date(a.latest.deletedAt).getTime()); %>
+
+                <% if (!deletedConversations.length) { %>
+                <p class="muted">No deleted messages recorded yet</p>
+                <% } else { %>
+                <div class="deleted-conversation-list" id="deletedConversationList">
+                  <% deletedConversations.forEach((entry) => {
+                    const latest = entry.latest;
+                    const latestPreview = latest.mediaUrl
+                      ? (latest.fileName || '[' + String(latest.type || 'media') + ']')
+                      : (latest.text || '[No content]');
+                  %>
+                  <article class="deleted-conversation-item">
+                    <div class="deleted-conversation-avatar" aria-hidden="true"><%= String(entry.chatLabel || '?').trim().charAt(0).toUpperCase() || '?' %></div>
+                    <div class="deleted-conversation-main">
+                      <div class="deleted-conversation-top-row">
+                        <p class="deleted-conversation-name"><%= entry.chatLabel %></p>
+                      </div>
+                      <p class="deleted-conversation-preview"><%= latestPreview %></p>
+                    </div>
+                    <div class="deleted-conversation-actions">
+                      <div class="deleted-conversation-action-row">
+                        <button
+                          type="button"
+                          class="btn btn-outline btn-sm deleted-icon-btn btn-open-deleted-conversation"
+                          data-chat-id="<%= entry.chatId %>"
+                          aria-label="View conversation"
+                          title="View conversation"
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-outline btn-sm deleted-icon-btn deleted-icon-btn-danger btn-delete-deleted-conversation"
+                          data-chat-id="<%= entry.chatId %>"
+                          aria-label="Delete conversation records"
+                          title="Delete conversation records"
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                            <path d="M10 11v6M14 11v6"></path>
+                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                          </svg>
+                        </button>
+                      </div>
+                      <time class="deleted-conversation-time deleted-conversation-time-side js-local-datetime" data-iso="<%= latest.deletedAt %>">
+                        <%= dayjs(latest.deletedAt).format('DD MMM YYYY HH:mm:ss') %>
+                      </time>
+                    </div>
+                  </article>
+                  <% }) %>
+                </div>
+                <% } %>
+              </div>
+            </article>
+          </section>
+
+          <section class="page" data-page="settings" id="settings" hidden>
+            <div class="grid two-cols settings-grid">
+              <article class="card" id="settings-appearance">
+                <div class="card-header">
+                  <h2 class="card-title">Appearance</h2>
+                  <p class="card-description">Choose how ScheduleBot looks on this device</p>
+                </div>
+                <div class="card-content">
+                  <div class="field">
+                    <label>Theme</label>
+                    <div class="theme-choice-group" role="radiogroup" aria-label="Theme">
+                      <label class="theme-choice">
+                        <input type="radio" name="dashboardTheme" value="light" />
+                        <span>Light</span>
+                      </label>
+                      <label class="theme-choice">
+                        <input type="radio" name="dashboardTheme" value="dark" />
+                        <span>Dark</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card" id="settings-permissions">
+                <div class="card-header">
+                  <h2 class="card-title">Reply permissions</h2>
+                  <p class="card-description">Control who can trigger the bot's automatic replies</p>
+                </div>
+                <div class="card-content">
+                  <div class="field">
+                    <label for="botPermissionMode">Respond to</label>
+                    <select id="botPermissionMode">
+                      <option value="everyone" <%= botPermission.mode === 'everyone' ? 'selected' : '' %>>Everyone</option>
+                      <option value="admins" <%= botPermission.mode === 'admins' ? 'selected' : '' %>>Group admins only</option>
+                      <option value="owner" <%= botPermission.mode === 'owner' ? 'selected' : '' %>>Owner only</option>
+                      <option value="off" <%= botPermission.mode === 'off' ? 'selected' : '' %>>No one (disabled)</option>
+                    </select>
+                    <p class="hint" id="botPermissionHint">In admin mode, personal chats still receive replies.</p>
+                  </div>
+                  <p id="botPermissionFeedback" class="feedback" role="status"></p>
+                </div>
+              </article>
+
+              <article class="card">
+                <div class="card-header">
+                  <h2 class="card-title">Session</h2>
+                  <p class="card-description">End access to this dashboard on this device</p>
+                </div>
+                <div class="card-content">
+                  <form action="/sign-out" method="post">
+                    <button class="btn btn-outline" type="submit">Sign out</button>
+                  </form>
+                </div>
+              </article>
+
+              <article class="card" id="settings-security">
+                <div class="card-header">
+                  <h2 class="card-title">Change password</h2>
+                  <p class="card-description">Update the password used to sign in to this dashboard</p>
+                </div>
+                <div class="card-content">
+                  <form class="stack-form" action="/change-password" method="post">
+                    <div class="field">
+                      <label for="currentPassword">Current password</label>
+                      <div class="password-input-wrap">
+                        <input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required />
+                        <button class="password-toggle" type="button" aria-label="Show password" aria-controls="currentPassword" aria-pressed="false" data-password-toggle></button>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="newPassword">New password</label>
+                      <div class="password-input-wrap">
+                        <input id="newPassword" name="newPassword" type="password" minlength="8" autocomplete="new-password" required />
+                        <button class="password-toggle" type="button" aria-label="Show password" aria-controls="newPassword" aria-pressed="false" data-password-toggle></button>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="confirmPassword">Confirm new password</label>
+                      <div class="password-input-wrap">
+                        <input id="confirmPassword" name="confirmPassword" type="password" minlength="8" autocomplete="new-password" required />
+                        <button class="password-toggle" type="button" aria-label="Show password" aria-controls="confirmPassword" aria-pressed="false" data-password-toggle></button>
+                      </div>
+                    </div>
+                    <% if (passwordFeedback) { %>
+                    <p class="feedback <%= passwordFeedback.type === 'error' ? 'is-error' : 'is-success' %>" role="status"><%= passwordFeedback.message %></p>
+                    <% } %>
+                    <button class="btn btn-primary" type="submit">Change password</button>
+                  </form>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal" id="commandPreviewModal" hidden>
+      <div class="modal-backdrop" data-close-modal="command-preview"></div>
+      <div class="modal-panel command-preview-panel" role="dialog" aria-modal="true" aria-labelledby="commandPreviewTitle">
+        <button type="button" class="modal-close" id="closeCommandPreviewModal" aria-label="Close preview">&times;</button>
+        <div class="command-preview-viewport" id="commandPreviewViewport">
+          <article class="wa-preview-card">
+            <div class="wa-status-bar">
+              <span class="wa-status-time">2:15 PM</span>
+              <div class="wa-status-icons" aria-hidden="true">
+                <span>◖◗</span>
+                <span>◉</span>
+                <span>▂▄▆</span>
+              </div>
+            </div>
+
+            <header class="wa-chat-header">
+              <span class="wa-back-icon" aria-hidden="true">&#x2039;</span>
+              <div class="wa-preview-avatar">S</div>
+              <div class="wa-preview-meta">
+                <p class="wa-preview-name" id="commandPreviewTitle">Command Preview</p>
+                <p class="wa-preview-status" id="commandPreviewDescription">online</p>
+              </div>
+              <div class="wa-header-actions" aria-hidden="true">
+                <span>&#128222;</span>
+                <span>&#128206;</span>
+                <span>&#8942;</span>
+              </div>
+              <span class="badge badge-outline wa-preview-badge" id="commandPreviewBadge">TEXT</span>
+            </header>
+
+            <div class="wa-chat-window">
+              <div class="wa-chat-conversation">
+                <div class="wa-date-chip" id="commandPreviewDateChip">Today</div>
+
+                <div class="wa-user-bubble">
+                  <p class="wa-user-text" id="commandPreviewIncomingText">!command</p>
+                  <span class="wa-incoming-time" id="commandPreviewIncomingTime">12:00</span>
+                </div>
+
+                <div class="wa-preview-bubble">
+                <div id="commandPreviewMeta" class="command-preview-meta" hidden></div>
+
+                <div class="command-preview-cover-wrap">
+                  <img src="https://avatar.vercel.sh/shadcn1" alt="Command cover" class="command-preview-cover" id="commandPreviewImage" />
+                  <video id="commandPreviewVideo" class="command-preview-media" controls hidden></video>
+                  <audio id="commandPreviewAudio" class="command-preview-audio" controls hidden></audio>
+                  <div id="commandPreviewDocument" class="command-preview-document" hidden>
+                    <span class="badge badge-outline">Document</span>
+                    <a id="commandPreviewDocumentLink" href="#" target="_blank" rel="noopener">Open document</a>
+                  </div>
+                </div>
+
+                <p id="commandPreviewContent" class="command-preview-content" hidden>No content</p>
+
+                <p id="commandPreviewDeliveryHint" class="command-preview-delivery-hint" hidden></p>
+
+                <div id="commandPreviewButtons" class="command-preview-buttons" hidden></div>
+                <span class="wa-preview-time" id="commandPreviewOutgoingTime">12:00 ✓✓</span>
+                </div>
+              </div>
+
+              <div class="wa-composer" aria-hidden="true">
+                <div class="wa-composer-icon">&#9786;</div>
+                <div class="wa-composer-input">Type a message</div>
+                <div class="wa-composer-icon">&#128206;</div>
+                <button type="button" class="wa-composer-send" id="commandPreviewActionBtn">Close Preview</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="commandButtonGuideModal" hidden>
+      <div class="modal-backdrop" data-close-modal="command-button-guide"></div>
+      <div class="modal-panel command-button-guide-modal-panel" role="dialog" aria-modal="true" aria-labelledby="commandButtonGuideModalTitle">
+        <button type="button" class="modal-close" id="closeCommandButtonGuideModal" aria-label="Close button setup guide">&times;</button>
+        <div class="command-button-guide-content">
+          <p class="account-eyebrow">Custom commands</p>
+          <h3 class="card-title" id="commandButtonGuideModalTitle">Button Setup Guide</h3>
+          <p class="card-description">Use these rules when configuring buttons for your WhatsApp response.</p>
+          <div class="command-guide-list">
+            <div class="command-guide-item">
+              <strong>Quick Reply</strong>
+              <span>The <strong>Value (id)</strong> must match an existing command trigger, such as <code>.hello</code>.</span>
+            </div>
+            <div class="command-guide-item">
+              <strong>Single Select</strong>
+              <span>Each option row ID must match a command trigger.</span>
+            </div>
+            <div class="command-guide-item">
+              <strong>Call Button</strong>
+              <span>Enter the phone number with country code, for example <code>60123456789</code>.</span>
+            </div>
+            <div class="command-guide-item">
+              <strong>Copy Code</strong>
+              <span>Enter the code users should copy, for example <code>PROMO2024</code>.</span>
+            </div>
+          </div>
+          <div class="command-guide-example">
+            <strong>Example</strong>
+            <p>If the command trigger is <code>.hello</code>, set a Quick Reply button Value to <code>.hello</code>. Clicking that button will trigger the command.</p>
+            <code>[{"id":".cmd1","title":"Option 1"},{"id":".cmd2","title":"Option 2"}]</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="scheduleViewModal" hidden>
+      <div class="modal-backdrop" data-close-modal="schedule-view"></div>
+      <div class="modal-panel schedule-view-modal-panel" role="dialog" aria-modal="true" aria-labelledby="scheduleViewModalTitle">
+        <button type="button" class="modal-close" id="closeScheduleViewModal" aria-label="Close schedule details">&times;</button>
+        <div class="card-content">
+          <h3 class="card-title" id="scheduleViewModalTitle">Schedule Details</h3>
+          <div class="schedule-modal-grid">
+            <p class="schedule-modal-row"><span class="schedule-modal-label">ID</span><span class="schedule-modal-value" id="scheduleModalId">-</span></p>
+            <p class="schedule-modal-row"><span class="schedule-modal-label">Type</span><span class="schedule-modal-value" id="scheduleModalType">-</span></p>
+            <p class="schedule-modal-row"><span class="schedule-modal-label">Target</span><span class="schedule-modal-value schedule-modal-mono" id="scheduleModalTarget">-</span></p>
+            <p class="schedule-modal-row"><span class="schedule-modal-label">Time</span><span class="schedule-modal-value" id="scheduleModalTime">-</span></p>
+            <p class="schedule-modal-row"><span class="schedule-modal-label">Status</span><span class="schedule-modal-value" id="scheduleModalStatus">-</span></p>
+            <p class="schedule-modal-row schedule-modal-row-message"><span class="schedule-modal-label">Message</span><span class="schedule-modal-value" id="scheduleModalMessage">-</span></p>
+            <p class="schedule-modal-row schedule-modal-row-message"><span class="schedule-modal-label">Buttons</span><span class="schedule-modal-value" id="scheduleModalButtons">-</span></p>
+          </div>
+          <p class="feedback" id="scheduleModalFeedback"></p>
+          <div class="schedule-modal-actions">
+            <button type="button" class="btn btn-outline" id="scheduleModalCloseBtn">Close</button>
+            <button type="button" class="btn btn-outline btn-delete-modal" id="scheduleModalDeleteBtn">Delete Schedule</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="deletedConversationModal" hidden>
+      <div class="modal-backdrop" data-close-modal="deleted-conversation"></div>
+      <div class="modal-panel deleted-conversation-modal-panel" role="dialog" aria-modal="true" aria-labelledby="deletedConversationModalTitle">
+        <button type="button" class="modal-close" id="closeDeletedConversationModal" aria-label="Close deleted messages conversation">&times;</button>
+        <article class="wa-preview-card deleted-wa-preview-card">
+          <div class="wa-status-bar">
+            <span class="wa-status-time" id="deletedConversationModalStatusTime">--:--</span>
+            <div class="wa-status-icons" aria-hidden="true">
+              <span>◖◗</span>
+              <span>◉</span>
+              <span>▂▄▆</span>
+            </div>
+          </div>
+
+          <header class="wa-chat-header">
+            <span class="wa-back-icon" aria-hidden="true">&#x2039;</span>
+            <div class="wa-preview-avatar" id="deletedConversationModalAvatar">D</div>
+            <div class="wa-preview-meta">
+              <p class="wa-preview-name" id="deletedConversationModalTitle">Deleted Conversation</p>
+              <p class="wa-preview-status" id="deletedConversationModalSubtitle">Showing deleted message records</p>
+            </div>
+            <div class="wa-header-actions" aria-hidden="true">
+              <span>&#128269;</span>
+              <span>&#128206;</span>
+              <span>&#8942;</span>
+            </div>
+          </header>
+
+          <div class="wa-chat-window deleted-wa-window">
+            <div class="wa-chat-conversation" id="deletedConversationModalMessages"></div>
+            <div class="wa-composer" aria-hidden="true">
+              <div class="wa-composer-icon">&#9786;</div>
+              <div class="wa-composer-input">Deleted messages are read-only</div>
+              <div class="wa-composer-icon">&#128206;</div>
+              <button type="button" class="wa-composer-send" id="deletedConversationModalCloseBtn">Close</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <script>
+      window.__SCHEDULES__ = <%- JSON.stringify(schedules) %>;
+      window.__CUSTOM_COMMANDS__ = <%- JSON.stringify(customCommands) %>;
+      window.__DELETED_MESSAGES__ = <%- JSON.stringify(deletedMessagesUi) %>;
+      window.__SAVED_CONTACTS__ = <%- JSON.stringify(savedContacts) %>;
+      window.__REMINDERS__ = <%- JSON.stringify(reminders) %>;
+    </script>
+    <script src="/public/app.js"></script>
+  </body>
+</html>
