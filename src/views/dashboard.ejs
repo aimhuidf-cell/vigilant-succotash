@@ -248,6 +248,7 @@
                 </div>
               </aside>
             </div>
+
           </section>
 
           <section class="page" data-page="reminders" id="reminders" hidden>
@@ -258,36 +259,7 @@
                     <h2 class="card-title">Create Reminder</h2>
                     <p class="card-description">Send a WhatsApp reminder before a date.</p>
                   </div>
-                </div>
-                <div class="card-content">
-                  <form id="reminder-form">
-                    <div class="field">
-                      <label for="reminderName">Reminder name</label>
-                      <input id="reminderName" required placeholder="Birthday Ahmad" />
-                    </div>
-                    <div class="grid two-cols">
-                      <div class="field">
-                        <label for="reminderDate">Date</label>
-                        <input id="reminderDate" type="date" required />
-                      </div>
-                      <div class="field">
-                        <label for="reminderTime">Time</label>
-                        <input id="reminderTime" type="time" value="09:00" required />
-                      </div>
-                    </div>
-                    <div class="field">
-                      <label for="reminderEarlyDays">Early days</label>
-                      <input id="reminderEarlyDays" value="10" placeholder="10, 3, 1, 0" required />
-                      <p class="hint">Use comma-separated days before the date. Include 0 for the date itself.</p>
-                    </div>
-                    <div class="field">
-                      <label for="reminderTargetChats">Target chats</label>
-                      <textarea id="reminderTargetChats" rows="3" required placeholder="60123456789@s.whatsapp.net, 1203630xxxx@g.us"></textarea>
-                      <p class="hint">Enter phone numbers or WhatsApp JIDs, separated by commas or new lines. Example: 60123456789 or 1203630xxxx@g.us.</p>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block" id="reminderSaveBtn">Save Reminder</button>
-                    <p class="feedback" id="reminderFeedback" role="status"></p>
-                  </form>
+                  <button type="button" class="btn btn-primary btn-sm" id="reminderCreateBtn">Create Reminder</button>
                 </div>
               </article>
               <article class="card table-card">
@@ -299,7 +271,7 @@
                 </div>
                 <div class="card-content no-pad">
                   <div class="table-wrap">
-                    <table>
+                    <table class="reminder-list-table">
                       <thead><tr><th>Name</th><th>Date</th><th>Early days</th><th>Targets</th><th></th></tr></thead>
                       <tbody id="reminder-list">
                         <% if (!reminders.length) { %><tr><td colspan="5" class="muted">No reminders yet</td></tr><% } %>
@@ -834,39 +806,6 @@
                     <span class="contacts-toolbar-note">Use .contact &lt;name&gt; from WhatsApp to look up a saved contact</span>
                   </div>
 
-                  <div class="saved-contact-form" id="savedContactForm" hidden>
-                    <input type="hidden" id="savedContactId" value="" />
-                    <div class="field-row">
-                      <div class="field">
-                        <label for="savedContactName">Name</label>
-                        <input id="savedContactName" placeholder="e.g. Ali Ahmad" />
-                      </div>
-                      <div class="field">
-                        <label for="savedContactPhone">Phone number</label>
-                        <input id="savedContactPhone" type="tel" placeholder="60123456789" />
-                      </div>
-                    </div>
-                    <div class="field-row">
-                      <div class="field">
-                        <label for="savedContactCategory">Category</label>
-                        <select id="savedContactCategory">
-                          <% contactCategories.forEach((cat) => { %>
-                          <option value="<%= cat %>"><%= cat %></option>
-                          <% }) %>
-                        </select>
-                      </div>
-                      <div class="field">
-                        <label for="savedContactNote">Note <span class="muted">(optional)</span></label>
-                        <input id="savedContactNote" placeholder="Short note" />
-                      </div>
-                    </div>
-                    <div class="form-actions">
-                      <button type="button" class="btn btn-primary" id="savedContactSaveBtn">Save Contact</button>
-                      <button type="button" class="btn btn-outline" id="savedContactCancelBtn">Cancel</button>
-                    </div>
-                    <p class="feedback" id="savedContactFormFeedback"></p>
-                  </div>
-
                   <p class="feedback" id="savedContactsFeedback" role="status" aria-live="polite"></p>
                   <div class="contacts-list" id="savedContactsList"></div>
                 </div>
@@ -1116,8 +1055,6 @@
 
                   <div class="command-list-grid" id="commandListGrid">
                     <% customCommands.forEach((item) => {
-                      const buttonCount = Array.isArray(item.buttons) ? item.buttons.length : 0;
-                      const hasMedia = Boolean(item.mediaType && item.mediaUrl);
                       const searchValue = `${item.trigger || ''} ${item.description || ''} ${item.category || ''}`.toLowerCase();
                     %>
                     <div class="command-card" data-trigger="<%= item.trigger %>" data-category="<%= item.category %>" data-search="<%= searchValue %>">
@@ -1126,12 +1063,6 @@
                         <span class="badge badge-outline command-card-category"><%= item.category %></span>
                       </div>
                       <p class="command-card-description"><%= item.description || 'No description' %></p>
-                      <div class="command-card-meta">
-                        <span class="command-card-chip"><%= hasMedia ? `Media: ${item.mediaType}` : 'Media: none' %></span>
-                        <% if (buttonCount) { %>
-                        <span class="command-card-chip">Buttons: <%= buttonCount %></span>
-                        <% } %>
-                      </div>
                       <div class="command-card-actions">
                         <button class="btn btn-outline btn-sm btn-preview-command" data-trigger="<%= item.trigger %>" aria-label="View command content">View</button>
                         <button class="btn btn-ghost btn-sm btn-edit-command" data-trigger="<%= item.trigger %>">Edit</button>
@@ -1342,6 +1273,98 @@
           </section>
         </div>
       </main>
+    </div>
+
+    <div class="modal" id="savedContactModal" hidden>
+      <div class="modal-backdrop" data-close-modal="saved-contact"></div>
+      <div class="modal-panel saved-contact-modal-panel" role="dialog" aria-modal="true" aria-labelledby="savedContactModalTitle">
+        <button type="button" class="modal-close" id="savedContactModalCloseBtn" aria-label="Close contact form">&times;</button>
+        <div class="saved-contact-modal-content">
+          <p class="account-eyebrow">Manual directory</p>
+          <h3 class="card-title" id="savedContactModalTitle">Add Contact</h3>
+          <p class="card-description">Save a contact for quick lookup from WhatsApp.</p>
+          <div class="saved-contact-form" id="savedContactForm">
+            <input type="hidden" id="savedContactId" value="" />
+            <div class="field-row">
+              <div class="field">
+                <label for="savedContactName">Name</label>
+                <input id="savedContactName" placeholder="e.g. Ali Ahmad" />
+              </div>
+              <div class="field">
+                <label for="savedContactPhone">Phone number</label>
+                <input id="savedContactPhone" type="tel" placeholder="60123456789" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="savedContactCategory">Category</label>
+                <select id="savedContactCategory">
+                  <% contactCategories.forEach((cat) => { %>
+                  <option value="<%= cat %>"><%= cat %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="field">
+                <label for="savedContactNote">Note <span class="muted">(optional)</span></label>
+                <input id="savedContactNote" placeholder="Short note" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="savedContactSaveBtn">Save Contact</button>
+              <button type="button" class="btn btn-outline" id="savedContactCancelBtn">Cancel</button>
+            </div>
+            <p class="feedback" id="savedContactFormFeedback" role="alert"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="reminderModal" hidden>
+      <div class="modal-backdrop" data-close-modal="reminder"></div>
+      <div class="modal-panel reminder-modal-panel" role="dialog" aria-modal="true" aria-labelledby="reminderModalTitle">
+        <button type="button" class="modal-close" id="reminderModalCloseBtn" aria-label="Close reminder form">&times;</button>
+        <div class="reminder-modal-content">
+          <p class="account-eyebrow">Automation</p>
+          <h3 class="card-title" id="reminderModalTitle">Create Reminder</h3>
+          <p class="card-description">Send a WhatsApp reminder before a date.</p>
+          <form id="reminder-form">
+            <div class="field">
+              <label for="reminderName">Reminder name</label>
+              <input id="reminderName" required placeholder="Birthday Ahmad" />
+            </div>
+            <div class="grid two-cols">
+              <div class="field">
+                <label for="reminderDate">Date</label>
+                <input id="reminderDate" type="date" required />
+              </div>
+              <div class="field">
+                <label for="reminderTime">Time</label>
+                <input id="reminderTime" type="time" value="09:00" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="reminderEarlyDays">Early days</label>
+              <input id="reminderEarlyDays" value="10" placeholder="10, 3, 1, 0" required />
+              <p class="hint">Use comma-separated days before the date. Include 0 for the date itself.</p>
+            </div>
+            <div class="field">
+              <label for="reminderContactPicker">Saved contacts</label>
+              <select id="reminderContactPicker" class="reminder-contact-picker" multiple size="4" aria-describedby="reminderContactPickerHint"></select>
+              <div class="reminder-picker-actions">
+                <p class="hint" id="reminderContactPickerHint">Select one or more saved contacts to add them as targets.</p>
+                <button type="button" class="btn btn-outline btn-sm" id="reminderAddContactsBtn">Add Selected Contacts</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="reminderTargetChats">Target chats</label>
+              <textarea id="reminderTargetChats" rows="3" required placeholder="60123456789@s.whatsapp.net, 1203630xxxx@g.us"></textarea>
+              <p class="hint">Enter phone numbers or WhatsApp JIDs, separated by commas or new lines. Example: 60123456789 or 1203630xxxx@g.us.</p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="reminderSaveBtn">Save Reminder</button>
+            <p class="feedback" id="reminderFeedback" role="status"></p>
+          </form>
+        </div>
+      </div>
     </div>
 
     <div class="modal" id="commandPreviewModal" hidden>

@@ -68,7 +68,18 @@ function persist() {
 }
 
 function listReminders() {
+  removeExpiredReminders();
   return items.map((item) => ({ ...item, earlyDays: [...item.earlyDays], targetChats: [...item.targetChats], sentOffsets: [...item.sentOffsets] }));
+}
+
+function removeExpiredReminders(dateKey = new Date().toISOString().slice(0, 10)) {
+  const remaining = items.filter((item) => item.date >= dateKey);
+  if (remaining.length === items.length) return 0;
+
+  const removedCount = items.length - remaining.length;
+  items = remaining;
+  persist();
+  return removedCount;
 }
 
 function createReminder(payload) {
@@ -109,4 +120,11 @@ function replaceReminder(id, reminder) {
   return true;
 }
 
-module.exports = { listReminders, createReminder, updateReminder, removeReminder, replaceReminder };
+module.exports = {
+  listReminders,
+  removeExpiredReminders,
+  createReminder,
+  updateReminder,
+  removeReminder,
+  replaceReminder,
+};

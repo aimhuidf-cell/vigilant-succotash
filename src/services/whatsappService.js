@@ -1630,8 +1630,9 @@ class WhatsAppService {
   }
 
   async checkAndSendReminders() {
-    if (!this.sock) return;
     const today = getDateContextInTimeZone(PRAYER_TIMEZONE).dateKey;
+    reminderStore.removeExpiredReminders(today);
+    if (!this.sock) return;
     const now = getClockContextInTimeZone(PRAYER_TIMEZONE).timeKey;
     const todayMs = Date.parse(`${today}T00:00:00Z`);
     const nextItems = reminderStore.listReminders();

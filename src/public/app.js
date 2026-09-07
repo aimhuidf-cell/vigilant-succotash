@@ -88,6 +88,9 @@ const savedContactSearchClear = document.getElementById('savedContactSearchClear
 const savedContactsCount = document.getElementById('savedContactsCount');
 const savedContactsFeedback = document.getElementById('savedContactsFeedback');
 const savedContactsList = document.getElementById('savedContactsList');
+const savedContactModal = document.getElementById('savedContactModal');
+const savedContactModalTitle = document.getElementById('savedContactModalTitle');
+const savedContactModalCloseBtn = document.getElementById('savedContactModalCloseBtn');
 const savedContactForm = document.getElementById('savedContactForm');
 const savedContactFormFeedback = document.getElementById('savedContactFormFeedback');
 const savedContactIdInput = document.getElementById('savedContactId');
@@ -479,6 +482,10 @@ function escapeContactHtml(value) {
   })[character]);
 }
 
+function normalizeContactPhone(value) {
+  return String(value || '').replace(/\D+/g, '');
+}
+
 function renderContacts() {
   if (!contactsList) return;
   const search = String(contactSearch?.value || '').trim().toLowerCase();
@@ -514,6 +521,7 @@ function renderContacts() {
     const phone = String(contact.phone || 'Phone number unavailable');
     const id = String(contact.id || '');
     const initial = name.trim().charAt(0).toUpperCase() || '?';
+    const isSaved = savedContacts.some((item) => normalizeContactPhone(item.phone) === normalizeContactPhone(phone));
     return `
       <article class="contact-item">
         <div class="contact-avatar" aria-hidden="true">${escapeContactHtml(initial)}</div>
@@ -523,6 +531,7 @@ function renderContacts() {
           <p class="contact-id">${escapeContactHtml(id)}</p>
         </div>
         <div class="contact-actions">
+          <button type="button" class="btn ${isSaved ? 'btn-ghost' : 'btn-primary'} btn-sm" data-contact-save="${escapeContactHtml(id)}"${isSaved ? ' disabled' : ''}>${isSaved ? 'Saved' : 'Save Contact'}</button>
           <button type="button" class="btn btn-outline btn-sm" data-contact-send="${escapeContactHtml(id)}">Send message</button>
           <button type="button" class="contact-copy-btn" data-contact-copy="${escapeContactHtml(id)}" aria-label="Copy chat ID" title="Copy chat ID">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -581,10 +590,11 @@ function resetSavedContactForm() {
   if (savedContactNoteInput) savedContactNoteInput.value = '';
   if (savedContactFormFeedback) savedContactFormFeedback.textContent = '';
   if (savedContactSaveBtn) savedContactSaveBtn.textContent = 'Save Contact';
+  if (savedContactModalTitle) savedContactModalTitle.textContent = 'Add Contact';
 }
 
 function openSavedContactForm(contact) {
-  if (!savedContactForm) return;
+  if (!savedContactForm || !savedContactModal) return;
   resetSavedContactForm();
 
   if (contact) {
@@ -594,15 +604,17 @@ function openSavedContactForm(contact) {
     if (savedContactCategoryInput) savedContactCategoryInput.value = contact.category || '';
     if (savedContactNoteInput) savedContactNoteInput.value = contact.note || '';
     if (savedContactSaveBtn) savedContactSaveBtn.textContent = 'Update Contact';
+    if (savedContactModalTitle) savedContactModalTitle.textContent = 'Edit Contact';
   }
 
-  savedContactForm.hidden = false;
-  if (savedContactNameInput) savedContactNameInput.focus();
+  savedContactModal.hidden = false;
+  document.body.style.overflow = 'hidden';
 }
 
 function closeSavedContactForm() {
-  if (!savedContactForm) return;
-  savedContactForm.hidden = true;
+  if (!savedContactModal) return;
+  savedContactModal.hidden = true;
+  document.body.style.overflow = '';
   resetSavedContactForm();
 }
 
@@ -653,16 +665,24 @@ function renderSavedContacts() {
 
 if (savedContactAddBtn) {
   savedContactAddBtn.addEventListener('click', () => {
-    if (savedContactForm && !savedContactForm.hidden && !savedContactIdInput?.value) {
-      closeSavedContactForm();
-      return;
-    }
     openSavedContactForm(null);
   });
 }
 
 if (savedContactCancelBtn) {
   savedContactCancelBtn.addEventListener('click', closeSavedContactForm);
+}
+
+if (savedContactModalCloseBtn) {
+  savedContactModalCloseBtn.addEventListener('click', closeSavedContactForm);
+}
+
+if (savedContactModal) {
+  savedContactModal.addEventListener('click', (event) => {
+    if (event.target instanceof HTMLElement && event.target.dataset.closeModal === 'saved-contact') {
+      closeSavedContactForm();
+    }
+  });
 }
 
 if (savedContactSaveBtn) {
@@ -699,6 +719,7 @@ if (savedContactSaveBtn) {
       }
 
       renderSavedContacts();
+      renderReminderContactPicker();
       closeSavedContactForm();
     } catch (error) {
       if (savedContactFormFeedback) savedContactFormFeedback.textContent = error.message;
@@ -2137,8 +2158,44 @@ if (contactsSearchClear) {
 
 if (contactsList) {
   contactsList.addEventListener('click', async (event) => {
+    const saveButton = event.target.closest('[data-contact-save]');
     const sendButton = event.target.closest('[data-contact-send]');
     const copyButton = event.target.closest('[data-contact-copy]');
+
+    if (saveButton) {
+      const contactId = saveButton.getAttribute('data-contact-save') || '';
+      const contact = contacts.find((item) => String(item.id || '') === contactId);
+      if (!contact || !contact.phone) return;
+
+      setButtonLoading(saveButton, true, 'Saving contact');
+      if (contactsFeedback) contactsFeedback.textContent = '';
+
+      try {
+        const response = await fetch('/api/contacts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: contact.name || contact.phone,
+            phone: contact.phone,
+            category: 'Other',
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to save contact');
+
+        savedContacts = [...savedContacts, data];
+        renderContacts();
+        renderReminderContactPicker();
+        if (savedContactsCount) {
+          savedContactsCount.textContent = `${savedContacts.length} contact${savedContacts.length === 1 ? '' : 's'}`;
+        }
+        if (contactsFeedback) contactsFeedback.textContent = `${data.name} saved to Saved Contacts`;
+      } catch (error) {
+        if (contactsFeedback) contactsFeedback.textContent = error.message;
+        setButtonLoading(saveButton, false);
+      }
+      return;
+    }
 
     if (sendButton) {
       const contactId = sendButton.getAttribute('data-contact-send') || '';
@@ -3684,6 +3741,16 @@ if (closeCommandPreviewModalBtn) {
 }
 
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && reminderModal && !reminderModal.hidden) {
+    closeReminderModal();
+    return;
+  }
+
+  if (event.key === 'Escape' && savedContactModal && !savedContactModal.hidden) {
+    closeSavedContactForm();
+    return;
+  }
+
   if (event.key === 'Escape' && commandButtonGuideModal && !commandButtonGuideModal.hidden) {
     closeCommandButtonGuideModal();
     return;
@@ -3998,6 +4065,76 @@ const reminderForm = document.getElementById('reminder-form');
 const reminderFeedback = document.getElementById('reminderFeedback');
 const reminderSaveBtn = document.getElementById('reminderSaveBtn');
 const reminderList = document.getElementById('reminder-list');
+const reminderCreateBtn = document.getElementById('reminderCreateBtn');
+const reminderModal = document.getElementById('reminderModal');
+const reminderModalCloseBtn = document.getElementById('reminderModalCloseBtn');
+const reminderContactPicker = document.getElementById('reminderContactPicker');
+const reminderAddContactsBtn = document.getElementById('reminderAddContactsBtn');
+const reminderTargetChatsInput = document.getElementById('reminderTargetChats');
+
+function renderReminderContactPicker() {
+  if (!reminderContactPicker) return;
+  reminderContactPicker.replaceChildren();
+
+  if (!savedContacts.length) {
+    const emptyOption = document.createElement('option');
+    emptyOption.textContent = 'No saved contacts yet';
+    emptyOption.disabled = true;
+    reminderContactPicker.appendChild(emptyOption);
+    if (reminderAddContactsBtn) reminderAddContactsBtn.disabled = true;
+    return;
+  }
+
+  savedContacts.forEach((contact) => {
+    const option = document.createElement('option');
+    option.value = contact.phone || '';
+    option.textContent = `${contact.name || contact.phone} (${contact.phone})`;
+    reminderContactPicker.appendChild(option);
+  });
+  if (reminderAddContactsBtn) reminderAddContactsBtn.disabled = false;
+}
+
+function addSelectedReminderContacts() {
+  if (!reminderContactPicker || !reminderTargetChatsInput) return;
+  const selectedPhones = Array.from(reminderContactPicker.selectedOptions)
+    .map((option) => option.value)
+    .filter(Boolean);
+  if (!selectedPhones.length) return;
+
+  const existingTargets = reminderTargetChatsInput.value
+    .split(/[\n,]+/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const mergedTargets = [...new Set([...existingTargets, ...selectedPhones])];
+  reminderTargetChatsInput.value = mergedTargets.join(', ');
+  Array.from(reminderContactPicker.options).forEach((option) => {
+    option.selected = false;
+  });
+}
+
+function closeReminderModal() {
+  if (!reminderModal) return;
+  reminderModal.hidden = true;
+  document.body.style.overflow = '';
+}
+
+function openReminderModal() {
+  if (!reminderModal) return;
+  renderReminderContactPicker();
+  reminderModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+if (reminderCreateBtn) reminderCreateBtn.addEventListener('click', openReminderModal);
+if (reminderModalCloseBtn) reminderModalCloseBtn.addEventListener('click', closeReminderModal);
+if (reminderAddContactsBtn) reminderAddContactsBtn.addEventListener('click', addSelectedReminderContacts);
+if (reminderModal) {
+  reminderModal.addEventListener('click', (event) => {
+    if (event.target instanceof HTMLElement && event.target.dataset.closeModal === 'reminder') {
+      closeReminderModal();
+    }
+  });
+}
 
 function setReminderFeedback(message, isError = false) {
   if (!reminderFeedback) return;
@@ -4051,6 +4188,7 @@ if (reminderForm) {
       document.getElementById('reminderTime').value = '09:00';
       document.getElementById('reminderEarlyDays').value = '10';
       setReminderFeedback('Reminder saved');
+      closeReminderModal();
     } catch (error) {
       setReminderFeedback(error.message, true);
     } finally {

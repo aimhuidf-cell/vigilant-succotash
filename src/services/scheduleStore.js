@@ -105,6 +105,7 @@ async function createSchedule({ targetType, targetValue, message, buttons, sched
 
 async function listSchedules() {
   await init();
+  await removeExpiredSchedules();
 
   if (postgres.hasDatabase()) {
     const result = await postgres.query(
@@ -126,6 +127,29 @@ async function listSchedules() {
     const bTime = dayjs(b.scheduleAt).valueOf();
     return aTime - bTime;
   });
+}
+
+async function removeExpiredSchedules(now = new Date()) {
+  await init();
+
+  if (postgres.hasDatabase()) {
+    const nowIso = dayjs(now).toISOString();
+    const result = await postgres.query(
+      `DELETE FROM schedules
+       WHERE status <> 'pending' AND schedule_at < $1`,
+      [nowIso]
+    );
+    return result.rowCount;
+  }
+
+  const nowMs = dayjs(now).valueOf();
+  const remaining = schedules.filter((item) => {
+    if (item.status === 'pending') return true;
+    return dayjs(item.scheduleAt).valueOf() >= nowMs;
+  });
+  const removedCount = schedules.length - remaining.length;
+  schedules.splice(0, schedules.length, ...remaining);
+  return removedCount;
 }
 
 async function getPendingSchedules(now = new Date()) {
@@ -230,6 +254,7 @@ module.exports = {
   init,
   createSchedule,
   listSchedules,
+  removeExpiredSchedules,
   getPendingSchedules,
   markSent,
   markFailed,

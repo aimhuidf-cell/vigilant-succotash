@@ -12,7 +12,10 @@ class SchedulerService {
     this.intervalRef = setInterval(async () => {
       try {
         const dueItems = await scheduleStore.getPendingSchedules();
-        if (!dueItems.length) return;
+        if (!dueItems.length) {
+          await scheduleStore.removeExpiredSchedules();
+          return;
+        }
 
         for (const item of dueItems) {
           try {
@@ -36,6 +39,8 @@ class SchedulerService {
             console.error(`[SCHEDULER] Failed #${item.id}:`, error.message);
           }
         }
+
+        await scheduleStore.removeExpiredSchedules();
       } catch (error) {
         console.error('[SCHEDULER] Tick failed:', error.message);
       }

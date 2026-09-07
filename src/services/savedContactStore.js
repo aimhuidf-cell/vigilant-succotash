@@ -4,7 +4,19 @@ const { randomUUID } = require('crypto');
 
 const DATA_DIR = path.join(process.cwd(), '.data');
 const DATA_FILE = path.join(DATA_DIR, 'saved-contacts.json');
-const ALLOWED_CATEGORIES = ['Customer', 'Supplier', 'Support', 'Other'];
+const ALLOWED_CATEGORIES = [
+  'Customer',
+  'Supplier',
+  'Support',
+  'Parent',
+  'Sibling',
+  'Child',
+  'Spouse',
+  'Relative',
+  'Friend',
+  'Colleague',
+  'Other',
+];
 
 function normalizeCategory(value) {
   const raw = String(value || '').trim();
