@@ -147,11 +147,22 @@ function pickInteractiveSelectionFromParsedParams(parsed) {
     parsed.row_id,
     parsed.rowId,
     parsed.id,
-    // Additional fallback candidates for native flow responses
+    parsed.id_value,
+    parsed.value,
+    parsed.selected,
+    parsed.selection,
     parsed.button?.id,
     parsed.button?.buttonId,
+    parsed.button?.selected_id,
+    parsed.button?.selectedId,
+    parsed.button?.selected_row_id,
+    parsed.button?.selectedRowId,
     parsed.reply?.id,
     parsed.button_reply?.id,
+    parsed.button_reply?.selected_id,
+    parsed.button_reply?.selectedId,
+    parsed.button_reply?.selected_row_id,
+    parsed.button_reply?.selectedRowId,
   ];
 
   for (const candidate of directCandidates) {
@@ -159,8 +170,17 @@ function pickInteractiveSelectionFromParsedParams(parsed) {
     if (value) return value;
   }
 
-  // Some clients can send compact payloads with an unusual key shape.
-  // Search nested values and return the first non-empty scalar string.
+  const selectionKeys = new Set([
+    'selected_id', 'selectedid', 'selected-id',
+    'selected_row_id', 'selectedrowid', 'selected-row-id',
+    'button_id', 'buttonid', 'button-id',
+    'quick_reply_id', 'quickreplyid', 'quick-reply-id',
+    'row_id', 'rowid', 'row-id',
+    'id', 'value', 'selected', 'selection',
+    'buttonid', 'button_id', 'selectedbuttonid', 'selected_button_id',
+    'selectedrowid', 'selected_row_id',
+  ]);
+
   const queue = [parsed];
   const seen = new Set();
 
@@ -172,13 +192,16 @@ function pickInteractiveSelectionFromParsedParams(parsed) {
 
     for (const [key, value] of Object.entries(current)) {
       const keyLower = String(key || '').toLowerCase();
-      if (['name', 'title', 'display_text', 'description', 'footer', 'body', 'text', 'message'].includes(keyLower)) {
+      if (['name', 'title', 'display_text', 'description', 'footer', 'body', 'text', 'message', 'label', 'caption'].includes(keyLower)) {
         continue;
       }
 
       if (typeof value === 'string') {
         const cleaned = value.trim();
-        if (cleaned) return cleaned;
+        if (!cleaned) continue;
+        if (selectionKeys.has(keyLower) || keyLower.endsWith('selectedid') || keyLower.endsWith('selected_id') || keyLower.endsWith('rowid') || keyLower.endsWith('row_id') || keyLower.endsWith('buttonid') || keyLower.endsWith('button_id')) {
+          return cleaned;
+        }
         continue;
       }
 
