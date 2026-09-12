@@ -679,6 +679,7 @@ class WhatsAppService {
   }
 
   cacheRecentMessage(chatId, message) {
+    if (isLidJid(chatId)) return;
     const cacheKey = this.makeRecentMessageCacheKey(chatId, message?.key?.id);
     if (!cacheKey || !message?.message) return;
 
@@ -2531,7 +2532,7 @@ class WhatsAppService {
     for (const chat of chats) {
       const chatId = String(chat?.id || '').trim();
       const chatType = getChatTypeFromJid(chatId);
-      if (chatType === 'other') continue;
+      if (chatType === 'other' || isLidJid(chatId)) continue;
       if (chatId === normalizedSelf) continue;
 
       const rawMessages = this.getStoreMessagesByJid(chatId);
@@ -2598,6 +2599,7 @@ class WhatsAppService {
     if (!cleanChatId) {
       throw new Error('chatId is required');
     }
+    if (isLidJid(cleanChatId)) return [];
 
     const cappedLimit = Math.max(1, Math.min(Number(limit) || 100, 500));
     const contacts = this.store?.contacts || {};

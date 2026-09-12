@@ -160,9 +160,9 @@ button {
 }
 
 .sidebar {
-  width: 264px;
+  width: 276px;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--background) 92%, var(--card));
+  background: color-mix(in srgb, var(--background) 88%, var(--card));
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -173,13 +173,14 @@ button {
 }
 
 .sidebar-header {
-  height: 68px;
+  height: 76px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 22px;
+  gap: 12px;
+  padding: 0 24px;
   border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 42%, transparent);
 }
 
 .sidebar-close-btn {
@@ -213,35 +214,36 @@ button {
 }
 
 .brand-mark {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
   background: var(--primary);
   color: var(--primary-foreground);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
+  box-shadow: 0 0 0 5px var(--primary-soft);
   flex-shrink: 0;
 }
 
 .brand-name {
   font-weight: 600;
-  font-size: 14px;
-  letter-spacing: -0.01em;
+  font-size: 15px;
+  letter-spacing: 0;
 }
 
 .sidebar-body {
   flex: 1;
-  padding: 22px 16px;
+  padding: 26px 14px 22px;
   overflow-y: auto;
 }
 
 .nav-group-label {
-  margin: 0 0 8px 10px;
-  font-size: 11px;
-  font-weight: 500;
+  margin: 0 0 9px 12px;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted-foreground);
@@ -250,19 +252,21 @@ button {
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .nav-group-spaced {
-  margin-top: 24px;
+  margin-top: 26px;
 }
 
 .nav-item {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 11px;
-  border-radius: 10px;
+  gap: 12px;
+  min-height: 42px;
+  padding: 10px 13px;
+  border-radius: 11px;
   color: var(--muted-foreground);
   font-size: 13.5px;
   font-weight: 500;
@@ -270,9 +274,10 @@ button {
 }
 
 .nav-icon {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   flex-shrink: 0;
+  opacity: 0.86;
 }
 
 .nav-item:hover {
@@ -284,6 +289,12 @@ button {
 .nav-item.active {
   background: var(--primary-soft);
   color: var(--primary);
+  font-weight: 650;
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.nav-item.active .nav-icon {
+  opacity: 1;
 }
 
 .nav-item-parent {
@@ -302,7 +313,7 @@ button {
 }
 
 .nav-item-parent.is-open {
-  background: var(--surface-2);
+  background: color-mix(in srgb, var(--surface-2) 72%, transparent);
   color: var(--foreground);
 }
 
@@ -312,14 +323,14 @@ button {
 
 .nav-submenu {
   display: grid;
-  gap: 2px;
+  gap: 3px;
   max-height: 0;
   overflow: hidden;
-  margin: 0 0 0 34px;
-  padding-left: 10px;
-  border-left: 2px solid color-mix(in srgb, var(--primary) 42%, var(--border));
-  background: color-mix(in srgb, var(--surface) 62%, transparent);
-  border-radius: 0 8px 8px 0;
+  margin: 0 0 0 36px;
+  padding: 2px 0 2px 12px;
+  border-left: 1px solid color-mix(in srgb, var(--primary) 42%, var(--border));
+  background: color-mix(in srgb, var(--surface) 42%, transparent);
+  border-radius: 0 10px 10px 0;
   opacity: 0;
   transition: max-height 180ms ease, margin 180ms ease, opacity 140ms ease;
 }
@@ -343,10 +354,10 @@ button {
 }
 
 .nav-subitem {
-  padding: 6px 8px;
-  border-radius: var(--radius);
+  padding: 8px 10px;
+  border-radius: 8px;
   color: var(--muted-foreground);
-  font-size: 12.5px;
+  font-size: 12px;
 }
 
 .nav-subitem:hover,
@@ -356,20 +367,21 @@ button {
 }
 
 .sidebar-footer {
-  height: 60px;
+  min-height: 68px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 22px;
+  gap: 10px;
+  padding: 0 24px;
   border-top: 1px solid var(--border);
   font-size: 12.5px;
   color: var(--muted-foreground);
+  background: color-mix(in srgb, var(--card) 38%, transparent);
 }
 
 .status-indicator {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -377,6 +389,10 @@ button {
 .status-indicator.is-on {
   background: var(--success);
   box-shadow: 0 0 0 3px var(--success-bg);
+}
+
+.sidebar-footer-text {
+  letter-spacing: 0.01em;
 }
 
 .status-indicator.is-off {
@@ -1894,12 +1910,6 @@ tbody tr:hover {
   display: inline-flex;
 }
 
-.inbox-layout {
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 16px;
-}
-
 .contacts-card {
   max-width: 980px;
   overflow: hidden;
@@ -2165,25 +2175,49 @@ tbody tr:hover {
 
 .inbox-list-card,
 .inbox-thread-card {
-  min-height: 620px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.inbox-list-card .card-header {
+  padding: 22px 26px 18px;
+  background: color-mix(in srgb, var(--primary-soft) 34%, var(--card));
+}
+
+.inbox-list-card .card-content {
+  padding: 20px 22px 24px;
+}
+
+.inbox-thread-header {
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 22px;
+}
+
+.inbox-thread-header .inbox-thread-heading {
+  flex: 1;
 }
 
 .inbox-thread-content {
-  height: 100%;
+  padding: 18px 22px 22px;
 }
 
 .inbox-conversation-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .inbox-conversation-item {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 12px;
+  border-radius: 10px;
+  padding: 13px 14px;
   background: var(--surface);
-  cursor: pointer;
   transition: border-color var(--motion-fast) ease, background var(--motion-fast) ease;
 }
 
@@ -2194,6 +2228,22 @@ tbody tr:hover {
 .inbox-conversation-item.is-active {
   border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
   background: color-mix(in srgb, var(--primary-soft) 55%, var(--surface));
+}
+
+.inbox-conversation-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.inbox-conversation-body {
+  min-width: 0;
 }
 
 .inbox-conversation-head {
@@ -2221,7 +2271,7 @@ tbody tr:hover {
 }
 
 .inbox-conversation-preview {
-  margin: 6px 0 0;
+  margin: 7px 0 0;
   font-size: 12px;
   color: var(--muted-foreground);
   white-space: nowrap;
@@ -2229,14 +2279,47 @@ tbody tr:hover {
   text-overflow: ellipsis;
 }
 
+.inbox-conversation-meta {
+  margin: 6px 0 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+
+.inbox-view-btn {
+  min-width: 58px;
+  margin-left: 4px;
+}
+
+.inbox-thread-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.inbox-thread-status {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-soft);
+}
+
 .inbox-message-list {
-  min-height: 520px;
-  max-height: 70vh;
+  min-height: 500px;
+  height: min(64vh, 640px);
+  max-height: 640px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-2) 52%, var(--card));
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 4px 2px;
+  gap: 12px;
+  padding: 16px 14px 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 .inbox-message-wrap {
@@ -3351,16 +3434,22 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 
-  .inbox-layout {
-    grid-template-columns: 1fr;
-  }
-
   .inbox-list-card,
   .inbox-thread-card {
     min-height: 0;
   }
 
+  .inbox-thread-header {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .inbox-thread-header .btn {
+    align-self: flex-start;
+  }
+
   .inbox-message-list {
+    min-height: 420px;
     max-height: 55vh;
   }
 }

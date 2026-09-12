@@ -677,8 +677,7 @@
           </section>
 
           <section class="page" data-page="inbox" id="inbox" hidden>
-            <div class="inbox-layout">
-              <article class="card inbox-list-card">
+            <article class="card inbox-list-card">
                 <div class="card-header section-head">
                   <div>
                     <h2 class="card-title">Inbox Conversations</h2>
@@ -692,20 +691,28 @@
                     <p class="muted">No conversations loaded yet.</p>
                   </div>
                 </div>
-              </article>
+            </article>
+          </section>
 
-              <article class="card inbox-thread-card">
-                <div class="card-header">
-                  <h2 class="card-title" id="inboxThreadTitle">Select a conversation</h2>
-                  <p class="card-description" id="inboxThreadSubtitle">Choose a contact on the left to view messages</p>
-                </div>
-                <div class="card-content inbox-thread-content">
-                  <div class="inbox-message-list" id="inboxMessageList">
-                    <p class="muted">Messages will appear here.</p>
+          <section class="page" data-page="inbox-conversation" id="inbox-conversation" hidden>
+            <article class="card inbox-thread-card">
+              <div class="card-header inbox-thread-header">
+                <button type="button" class="btn btn-outline btn-sm" id="inboxBackBtn">Back to conversations</button>
+                <div class="inbox-thread-heading">
+                  <span class="inbox-thread-status" aria-hidden="true"></span>
+                  <div>
+                    <h2 class="card-title" id="inboxThreadTitle">Select a conversation</h2>
+                    <p class="card-description" id="inboxThreadSubtitle">Choose a conversation to view messages</p>
                   </div>
                 </div>
-              </article>
-            </div>
+              </div>
+              <div class="card-content inbox-thread-content">
+                <p class="feedback" id="inboxDetailFeedback"></p>
+                <div class="inbox-message-list" id="inboxMessageList">
+                  <p class="muted">Messages will appear here.</p>
+                </div>
+              </div>
+            </article>
           </section>
 
           <section class="page" data-page="contacts" id="contacts" hidden>

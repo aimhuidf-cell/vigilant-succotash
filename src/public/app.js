@@ -68,6 +68,8 @@ const sendPersonalChatFetchHint = document.getElementById('sendPersonalChatFetch
 const sendRefreshPersonalChatsBtn = document.getElementById('sendRefreshPersonalChatsBtn');
 const inboxRefreshBtn = document.getElementById('inboxRefreshBtn');
 const inboxFeedback = document.getElementById('inboxFeedback');
+const inboxDetailFeedback = document.getElementById('inboxDetailFeedback');
+const inboxBackBtn = document.getElementById('inboxBackBtn');
 const inboxConversationList = document.getElementById('inboxConversationList');
 const inboxThreadTitle = document.getElementById('inboxThreadTitle');
 const inboxThreadSubtitle = document.getElementById('inboxThreadSubtitle');
@@ -222,6 +224,7 @@ const PAGE_TITLE_MAP = {
   schedule: 'Schedule',
   'send-message': 'Send Message',
   inbox: 'Inbox',
+  'inbox-conversation': 'Inbox Conversation',
   contacts: 'Contacts',
   'custom-commands': 'Custom Command',
   reminders: 'Reminders',
@@ -395,9 +398,10 @@ function closeSidebar() {
 
 function setActiveNavItemByHash(hash) {
   if (!navItems.length) return;
+  const activeHash = hash === '#inbox-conversation' ? '#inbox' : hash;
   navItems.forEach((item) => {
     const href = item.getAttribute('href') || '';
-    item.classList.toggle('active', href === hash);
+    item.classList.toggle('active', href === activeHash);
   });
   if (settingsNavParent) {
     settingsNavParent.classList.toggle('active', hash === '#settings');
@@ -446,6 +450,9 @@ function showPageByHash(hash) {
   const pageKey = String(pageToShow.getAttribute('data-page') || '').trim();
   if (pageKey === 'inbox') {
     loadInboxConversations();
+  }
+  if (pageKey === 'inbox-conversation') {
+    loadInboxMessages(activeInboxChatId);
   }
   if (pageKey === 'contacts') {
     loadContacts();
@@ -1506,9 +1513,11 @@ async function uploadSendMediaFile(file, mediaType) {
 }
 
 function setInboxFeedback(message, color = '#5d645d') {
-  if (!inboxFeedback) return;
-  inboxFeedback.textContent = message;
-  inboxFeedback.style.color = color;
+  [inboxFeedback, inboxDetailFeedback].forEach((feedback) => {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.style.color = color;
+  });
 }
 
 function formatInboxTime(isoString) {
@@ -1677,9 +1686,17 @@ function renderInboxConversations(conversations) {
   }
 
   rows.forEach((conversation) => {
-    const item = document.createElement('button');
-    item.type = 'button';
+    const item = document.createElement('article');
     item.className = `inbox-conversation-item${conversation.chatId === activeInboxChatId ? ' is-active' : ''}`;
+
+    const avatar = document.createElement('div');
+    avatar.className = 'inbox-conversation-avatar';
+    avatar.textContent = String(conversation.name || conversation.chatId || '?').trim().charAt(0).toUpperCase();
+    avatar.setAttribute('aria-hidden', 'true');
+    item.appendChild(avatar);
+
+    const body = document.createElement('div');
+    body.className = 'inbox-conversation-body';
 
     const head = document.createElement('div');
     head.className = 'inbox-conversation-head';
@@ -1699,13 +1716,26 @@ function renderInboxConversations(conversations) {
     const prefix = conversation.lastMessageFromMe ? 'You: ' : '';
     preview.textContent = `${prefix}${conversation.lastMessageText || '[No preview]'}`;
 
-    item.appendChild(head);
-    item.appendChild(preview);
-    item.addEventListener('click', () => {
+    const meta = document.createElement('p');
+    meta.className = 'inbox-conversation-meta';
+    meta.textContent = `${conversation.chatType === 'group' ? 'Group' : 'Personal'}${conversation.unreadCount ? ` • ${conversation.unreadCount} unread` : ''}`;
+
+    body.appendChild(head);
+    body.appendChild(preview);
+    body.appendChild(meta);
+    item.appendChild(body);
+
+    const viewButton = document.createElement('button');
+    viewButton.type = 'button';
+    viewButton.className = 'btn btn-outline btn-sm inbox-view-btn';
+    viewButton.textContent = 'View';
+    viewButton.setAttribute('aria-label', `View conversation with ${conversation.name || conversation.chatId}`);
+    viewButton.addEventListener('click', () => {
       activeInboxChatId = conversation.chatId;
       renderInboxConversations(inboxConversations);
-      loadInboxMessages(conversation.chatId);
+      window.location.hash = '#inbox-conversation';
     });
+    item.appendChild(viewButton);
 
     inboxConversationList.appendChild(item);
   });
@@ -1730,16 +1760,10 @@ async function loadInboxConversations(force = false) {
     inboxConversations = Array.isArray(data.conversations) ? data.conversations : [];
     hasLoadedInbox = true;
     renderInboxConversations(inboxConversations);
-
-    if (!activeInboxChatId && inboxConversations.length) {
-      activeInboxChatId = inboxConversations[0].chatId;
-      renderInboxConversations(inboxConversations);
-      await loadInboxMessages(activeInboxChatId);
-    } else if (activeInboxChatId) {
-      await loadInboxMessages(activeInboxChatId);
-    } else {
-      setInboxFeedback('No conversations yet.', '#5d645d');
-    }
+    setInboxFeedback(
+      inboxConversations.length ? 'Select a conversation to view messages.' : 'No conversations yet.',
+      '#5d645d'
+    );
   } catch (error) {
     inboxConversations = [];
     renderInboxConversations([]);
@@ -2327,6 +2351,12 @@ if (sendRefreshPersonalChatsBtn) {
 if (inboxRefreshBtn) {
   inboxRefreshBtn.addEventListener('click', () => {
     loadInboxConversations(true);
+  });
+}
+
+if (inboxBackBtn) {
+  inboxBackBtn.addEventListener('click', () => {
+    window.location.hash = '#inbox';
   });
 }
 
